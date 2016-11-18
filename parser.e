@@ -14,86 +14,195 @@ creation {ANY}
 	make
 	
 feature {}
-  parse_util(s : STRING) is -- Nom<donnee>
+  parse_util(line : STRING) is -- Nom<Delahaye> ; Prenom<Benoit> ; Identifiant<bdelahay>
     local
-      cle : STRING
-      valeur : STRING
+      i : INTEGER
+      dictionnaire_temp, dictionnaire_final : ARRAY[STRING]
     do
-      cle := ""
-      valeur := ""
-      if (s.occurrences('<') = 0) then
-        io.put_string("    Type : ")
-        io.put_string(s)
-        io.put_string("%N")
-      else
-        io.put_string(s)
-        cle.copy(s.substring(1, s.index_of('<', 1)-1))
-        valeur.copy(s.substring(s.index_of('<', 1)+1, s.index_of('>', 1)-1))
-        io.put_string("    ")
-        io.put_string(s)
-        io.put_string("%N")
-        io.put_string("        Cle : ")
-        io.put_string(cle)
-        io.put_string("%N")
-        io.put_string("        Valeur : ")
-        io.put_string(valeur)
-        io.put_string("%N")
+    
+      create dictionnaire_temp.make(1,1)
+			create dictionnaire_final.make(1,1)
+      -- On sépare chaque donnée par des espace (et on remplace les espaces par 
+      -- un autre charactère pour les sauvegarder, ici '*')
+      line.replace_all(' ', '*')
+      line.replace_all(';',' ')
+      line.replace_all('<',' ')
+			line.replace_all('>',' ')
+      
+      -- Tableau temporaire contient les clefs - valeurs de la ligne
+      dictionnaire_temp.copy(line.split)
+
+      -- Boucle pour avoir le tableau final avec que le type + les couples clefs/valeur
+      from 
+				i := 1
+			until
+			  i > dictionnaire_temp.count -- > car on incrémente de 3 en 3 (paire + 1 espace)
+			loop
+         -- On remet les espaces dans les valeurs
+        dictionnaire_temp.item(i).replace_all('*',' ')
+				dictionnaire_temp.item(i).left_adjust
+				dictionnaire_temp.item(i).right_adjust
+        if (dictionnaire_temp.item(i).count > 0) then
+	      	-- On ajoute au dico final
+					dictionnaire_final.add(dictionnaire_temp.item(i), dictionnaire_final.upper)
+				end
+				i := i+1
       end
+
+			-- Boucle pour afficher les utilisateurs			
+			from
+				i := 1
+			until i = dictionnaire_final.count
+			loop
+				io.put_string(dictionnaire_final.item(i))
+				io.put_string(" -- ")
+				io.put_string(dictionnaire_final.item(i+1))
+				io.put_string("%N")	
+				i := i+2
+			end
+			
+    end
+
+
+
+	parse_media(line : STRING) is -- Nom<Delahaye> ; Prenom<Benoit> ; Identifiant<bdelahay>
+    local
+      i : INTEGER
+      dictionnaire_temp, dictionnaire_final : ARRAY[STRING]
+    do
+    
+      create dictionnaire_temp.make(1,1)
+			create dictionnaire_final.make(1,1)
+      -- On sépare chaque donnée par des espace (et on remplace les espaces par 
+      -- un autre charactère pour les sauvegarder, ici '*')
+      line.replace_all(' ', '*')
+      line.replace_all(';',' ')
+      line.replace_all('<',' ')
+			line.replace_all('>',' ')
+      
+      -- Tableau temporaire contient les clefs - valeurs de la ligne
+      dictionnaire_temp.copy(line.split)
+
+      -- Boucle pour avoir le tableau final avec que le type + les couples clefs/valeur
+      from 
+				i := 1
+			until
+			  i > dictionnaire_temp.count -- > car on incrémente de 3 en 3 (paire + 1 espace)
+			loop
+         -- On remet les espaces dans les valeurs
+        dictionnaire_temp.item(i).replace_all('*',' ')
+				dictionnaire_temp.item(i).left_adjust
+				dictionnaire_temp.item(i).right_adjust
+        if (dictionnaire_temp.item(i).count > 0) then
+	      	-- On ajoute au dico final
+					dictionnaire_final.add(dictionnaire_temp.item(i), dictionnaire_final.upper)
+				end
+				i := i+1
+      end
+
+			-- Boucle pour afficher les medias
+			-- Afficher le type
+			dictionnaire_temp.item(1).right_adjust	
+			io.put_string("Type -- ")
+      io.put_string(dictionnaire_temp.item(1))	
+			io.put_string("%N");		
+			from
+				i := 2
+			until i = dictionnaire_final.count
+			loop
+				io.put_string(dictionnaire_final.item(i))
+				io.put_string(" -- ")
+				io.put_string(dictionnaire_final.item(i+1))
+				io.put_string("%N")	
+				i := i+2
+			end
+			
     end
 
 feature {ANY}
+
 	make is
+		local
+		do 
+			io.put_string("----- PARSING UTILISATEUR ------%N")	
+			parsing_utilisateurs
+			io.put_string("-------- PARSING MEDIA ---------%N")	
+			parsing_medias
+		end
+
+	-------------------------- PARSING UTILISATEURS ------------------------------
+
+	parsing_utilisateurs is
 		-- Main pour tester la lecture d'un fichier
 	  local
 	    source: STRING
 	    text_reader : TEXT_FILE_READ
 	    readable : BOOLEAN
 	    debut : BOOLEAN
-	    donnee : STRING
-	    indice : INTEGER
+	    --indice : INTEGER
 		do
 		  io.put_string("Début du programme !%N")
-			source := "medias.txt"
+			source := "utilisateurs.txt"
 			create text_reader.connect_to(source)
   	  if (text_reader.is_connected) then
-  	    io.put_string("Accès au fichier 'medias.txt' : OK%N")
+  	    io.put_string("Accès au fichier 'utilisateurs.txt' : OK%N")
   	    
   	    from
 				readable := not text_reader.end_of_input
-				donnee := ""
 				debut := True
 			  until
 				  not readable
 			  loop
-				  text_reader.read_word_using(" ; ") -- ";%R%N"
-				  donnee.copy(text_reader.last_string)
-				  if (debut) then
-				    io.put_string("Nouvelle ligne --> %N")
-				    debut := False
-				  end
-				  
-				  if (donnee.has_substring("%N") and donnee.index_of('%N', 1) /= donnee.count) then
-				    indice := donnee.index_of('%N', 1)
-				    
-				    parse_util(donnee.substring(1, indice-1))
-				    io.put_string("%N")
-				    
-				    io.put_string("Nouvelle ligne --> %N")
-				    
-				    parse_util(donnee.substring(indice+1, donnee.count))
-				  else
-            io.put_string("-------->")
-            io.put_string(donnee)
-            io.put_string("%N")
-				    parse_util(donnee)
-				  end
+          text_reader.read_line
+          if (text_reader.last_string.count > 0) then -- Si différent de la fin de ligne
+            parse_util(text_reader.last_string)
+						io.put_string("%N%N")
+          end
 				  readable := not text_reader.end_of_input
 			  end
   	    
   	  else
-  	    io.put_string("Accès au fichier 'medias.txt' : KO %N")
+  	    io.put_string("Accès au fichier 'utilisateurs.txt' : KO %N")
   	  end
-  	  io.put_string("Fin du programme !%N")
+      text_reader.disconnect  	  
+      io.put_string("Fin du programme !%N")
 		end	
+
+			-------------------------- PARSING MEDIAS --------------------------------
+
+		parsing_medias is
+			-- Main pour tester la lecture d'un fichier
+			local
+			  source: STRING
+			  text_reader : TEXT_FILE_READ
+			  readable : BOOLEAN
+			  debut : BOOLEAN
+			do
+				io.put_string("Début du programme !%N")
+				source := "medias.txt"
+				create text_reader.connect_to(source)
+			  if (text_reader.is_connected) then
+			    io.put_string("Accès au fichier 'medias.txt' : OK%N")
+			    
+			    from
+					readable := not text_reader.end_of_input
+					debut := True
+					until
+						not readable
+					loop
+		        text_reader.read_line
+		        if (text_reader.last_string.count > 0) then -- Si différent de la fin de ligne
+		          parse_media(text_reader.last_string)
+							io.put_string("%N%N")
+		        end
+						readable := not text_reader.end_of_input
+					end
+			    
+			  else
+			    io.put_string("Accès au fichier 'medias.txt' : KO %N")
+			  end
+		    text_reader.disconnect  	  
+		    io.put_string("Fin du programme !%N")
+			end	
 
 end -- class PARSER
