@@ -8,6 +8,7 @@ feature {}
 	utilisateur: UTILISATEUR 
 	media : MEDIA
 	date_emprunt : TIME 
+	rendu : BOOLEAN
 
 feature {ANY}
 
@@ -16,6 +17,7 @@ feature {ANY}
 			utilisateur := utilisateurp
 			media := mediap
 			date_emprunt := date_emprunt.update
+			rendu := False
 		end	
 
 	-- Getters
@@ -35,6 +37,11 @@ feature {ANY}
             Result := date_emprunt
         end
 
+	get_rendu : BOOLEAN is
+        do
+            Result := rendu
+        end
+
 	-- Setters
 
 	set_utilisateur(utilisateurp: UTILISATEUR) is
@@ -50,6 +57,11 @@ feature {ANY}
 	set_date_emprunt(date_empruntp: TIME) is
         do
             date_emprunt := date_empruntp
+        end
+
+	set_rendu(rendup: BOOLEAN) is
+        do
+            rendu := rendup
         end
 
 end -- class EMPRUNT

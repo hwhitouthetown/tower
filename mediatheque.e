@@ -10,10 +10,11 @@ creation {ANY}
     make
 
 feature {}
-    nb_media: INTEGER
-    nb_client:INTEGER
-    list_medias : ARRAY[MEDIA]
-    list_emprunts : ARRAY[EMPRUNT]
+    nb_media : INTEGER
+    nb_client : INTEGER
+    liste_medias : ARRAY[MEDIA]
+    liste_emprunts : ARRAY[EMPRUNT]
+    liste_utilisateurs : ARRAY[UTILISATEUR] 
     
     -- Méthode pour parser une ligne en fonction de son type
     parsing_line(line : STRING; type : STRING) is

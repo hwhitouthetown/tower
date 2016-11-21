@@ -8,6 +8,7 @@ feature {}
 	nom: STRING
     prenom: STRING
     identifiant: STRING 	
+    max_emprunt: INTEGER
 
 feature {}
 	
@@ -21,6 +22,8 @@ feature {}
 
 			identifiant := ""
 			identifiant.copy(identifiantp) 
+
+            max_emprunt := 5
         end
 
     -- Getters

@@ -7,7 +7,7 @@ creation {ANY}
 feature {}
 	titre: STRING
 	nombre : INTEGER
-	createur : STRING 
+	createur : STRING -- ??
 
 feature {ANY}
 	afficher is
@@ -28,6 +28,30 @@ feature {ANY}
 
 			createur := ""
 			createur.copy(createurp)
-		end	
+		end
+
+	-- Getters
+
+	get_titre : STRING is
+        do
+            Result := titre
+        end
+
+	get_nombre : INTEGER is
+        do
+            Result := nombre
+        end
+
+	-- Setters
+
+	set_titre(titrep: STRING) is
+        do
+            titre.copy(titrep)
+        end
+
+	set_nombre(nombrep: INTEGER) is
+        do
+            nombre := nombrep
+        end
 
 end -- class MEDIA

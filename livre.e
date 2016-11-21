@@ -9,13 +9,31 @@ class LIVRE inherit
 creation {ANY}
 	make_livre  
  
+feature {}
+	auteur : STRING
 
 feature {ANY}
 
-	make_livre(titrei: STRING; createuri :STRING; nombrei : INTEGER) is
+	make_livre(titrei: STRING; createuri :STRING; nombrei : INTEGER; auteuri : STRING) is
 		do
 			make_media(titrei, createuri, nombrei)
+			auteur := ""
+			auteur.copy(auteuri)
 		end
+
+	-- Getters
+
+	get_auteur : STRING is
+        do
+            Result := auteur
+        end
+
+	-- Setters
+
+	set_auteur(auteurp: STRING) is
+        do
+            auteur.copy(auteurp)
+        end
 
 	afficher is
 		do
