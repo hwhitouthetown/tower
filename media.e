@@ -2,11 +2,11 @@ class MEDIA
 -- Represente un media
 	
 creation {ANY}
-	make_media -- Creation with title 
+	make_media
 
 feature {}
-	titre: STRING -- 
-	nombre : INTEGER -- nombre d'exemplaire
+	titre: STRING
+	nombre : INTEGER
 	createur : STRING 
 
 feature {ANY}
@@ -18,16 +18,16 @@ feature {ANY}
 			io.put_string("Nombre d'exemplaire : " + nombre.to_string + "%N") 
 		end
 
-	make_media (titrei: STRING; createuri :STRING; nombrei : INTEGER) is
+	make_media (titrep: STRING; createurp: STRING; nombrep: INTEGER) is
 		do
-			titre := " "
-			titre.copy(titrei)
+			titre := ""
+			titre.copy(titrep)
 			
 			nombre := 0
-			nombre.copy(nombrei)
+			nombre.copy(nombrep)
 
-			createur := " "
-			createur.copy(createuri)
+			createur := ""
+			createur.copy(createurp)
 		end	
 
 end -- class MEDIA
