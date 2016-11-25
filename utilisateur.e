@@ -10,12 +10,12 @@ feature {}
     identifiant: STRING 	
     max_emprunt: INTEGER
 
-feature {}
+feature {ANY}
 	
     make_utilisateur(nomp: STRING; prenomp: STRING; identifiantp: STRING) is
         do
             nom := ""
-			nom.copy(titrep)
+			nom.copy(nomp)
 			
 			prenom := ""
 			prenom.copy(prenomp)
@@ -67,5 +67,10 @@ feature {}
 			io.put_string("Prenom :" + prenom + "%N")
 			io.put_string("Identifiant : " + identifiant + "%N") 
         end
+
+	peut_emprunter : BOOLEAN is
+		do
+			-- A implémenter
+		end
 
 end -- class UTILISATEUR

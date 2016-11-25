@@ -13,10 +13,13 @@ feature {}
 feature {ANY}
 
 	make_emprunt (utilisateurp: UTILISATEUR; mediap: MEDIA) is
+		local
+			time : TIME		
 		do
+			time.update
 			utilisateur := utilisateurp
 			media := mediap
-			date_emprunt := date_emprunt.update
+			date_emprunt := time
 			rendu := False
 		end	
 
@@ -49,7 +52,7 @@ feature {ANY}
             utilisateur := utilisateurp
         end
 
-	set_media(mediap: STRING) is
+	set_media(mediap: MEDIA) is
         do
             media := mediap
         end

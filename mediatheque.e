@@ -116,6 +116,9 @@ feature {ANY}
         do 
             nb_media := 0 
             nb_client := 0 
+			create liste_medias.make(1,1)
+			create liste_utilisateurs.make(1,1)
+			create liste_emprunts.make(1,1)
             io.put_string("Bienvenue dans la mediatheque du futur :%N")
             io.put_string("----- PARSING UTILISATEUR ------%N%N")	
             parsing_file("utilisateurs.txt", "utilisateurs")
@@ -123,5 +126,23 @@ feature {ANY}
             parsing_file("medias.txt", "medias")
             io.put_string("Fin du programme !%N")
         end
-	
+
+	emprunter_media(utilisateur: UTILISATEUR; media: MEDIA;) is
+		local
+            emp : EMPRUNT
+		do
+			if media.est_empruntable then
+				if utilisateur.peut_emprunter then
+					create emp.make_emprunt(utilisateur, media)
+					liste_emprunts.add_last(emp)
+					io.put_string("Création de l'emprunt OK%N")
+				else
+					io.put_string("Création de l'emprunt KO : l'utilisateur ne peut pas emprunter%N")
+				end		
+			else
+				io.put_string("Création de l'emprunt KO : le média n'est pas empruntable%N")
+			end
+		end
+		
+
 end -- class MEDIATHEQUE

@@ -54,4 +54,13 @@ feature {ANY}
             nombre := nombrep
         end
 
+	est_empruntable : BOOLEAN is
+		do
+			if nombre > 0 then
+				Result := True
+			else
+				Result := False
+			end
+		end
+
 end -- class MEDIA
