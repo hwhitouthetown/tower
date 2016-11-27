@@ -2,12 +2,13 @@ class MEDIA
 -- Represente un media
 	
 creation {ANY}
-	make_media
+	make_media,
+	make_empty_media
 
 feature {}
 	titre: STRING
 	nombre : INTEGER
-	createur : STRING -- ??
+	createur : STRING 
 
 feature {ANY}
 	afficher is
@@ -29,6 +30,13 @@ feature {ANY}
 			createur := ""
 			createur.copy(createurp)
 		end
+
+	make_empty_media is
+		do
+			titre := ""
+			nombre := 0
+			createur := ""
+		end	
 
 	-- Getters
 

@@ -2,13 +2,15 @@ class UTILISATEUR
 -- Represente un utilisateur
 	
 creation {ANY}
-    make_utilisateur
+    make_utilisateur,
+    make_empty_utilisateur
 
 feature {}
 	nom: STRING
     prenom: STRING
-    identifiant: STRING 	
-    max_emprunt: INTEGER
+    identifiant: STRING
+    motdepasse : STRING 
+
 
 feature {ANY}
 	
@@ -21,10 +23,20 @@ feature {ANY}
 			prenom.copy(prenomp)
 
 			identifiant := ""
-			identifiant.copy(identifiantp) 
+			identifiant.copy(identifiantp)
 
-            max_emprunt := 5
+            motdepasse := ""
+            motdepasse.copy(identifiantp)
         end
+
+    make_empty_utilisateur is
+        do
+            nom := ""
+            prenom := ""
+            identifiant := ""
+            motdepasse := ""
+        end    
+
 
     -- Getters
 

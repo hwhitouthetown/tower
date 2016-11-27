@@ -7,10 +7,9 @@ class LIVRE inherit
 	end 
 	
 creation {ANY}
-	make_livre  
+	make_livre,
+	make_empty_livre  
  
-feature {}
-	auteur : STRING
 
 feature {ANY}
 
@@ -20,6 +19,12 @@ feature {ANY}
 			auteur := ""
 			auteur.copy(auteuri)
 		end
+
+	make_empty_livre is 
+		do
+			make_empty_media 
+			auteur := ""
+		end	
 
 	-- Getters
 
@@ -33,7 +38,7 @@ feature {ANY}
 	set_auteur(auteurp: STRING) is
         do
             auteur.copy(auteurp)
-        end
+        end   
 
 	afficher is
 		do

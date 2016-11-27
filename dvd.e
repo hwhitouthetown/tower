@@ -7,21 +7,21 @@ class DVD inherit
 	end 
 	
 creation {ANY}
-	make_livre  
+	make_dvd, 
+	make_empty_dvd
 
 feature {}
 	annee : INTEGER
-	realisateur : STRING
 	type : STRING
-	list_acteurs : ARRAY[STRING]
+	liste_acteurs : ARRAY[STRING]
 
 feature {ANY}
 
-	make_livre(titrei: STRING; createuri :STRING; nombrei : INTEGER;
-			   anneei : INTEGER; liste_acteursi : ARRAY[STRING]
+	make_dvd(titrei: STRING; createuri :STRING; nombrei : INTEGER;
+			   anneei : INTEGER; liste_acteursi : ARRAY[STRING];
                realisateuri : STRING; typei : STRING) is
 		do
-			liste_acteurs.make(0,0)
+			create liste_acteurs.with_capacity(1,0)
 			liste_acteurs.copy(liste_acteursi)
 
 			make_media(titrei, createuri, nombrei)
@@ -35,6 +35,17 @@ feature {ANY}
             type := ""
             type.copy(typei)
 		end
+
+	make_empty_dvd is 
+		do
+			make_empty_media 
+			realisateur := ""
+			type := ""
+			annee := 0
+			create liste_acteurs.with_capacity(1,0)
+
+		end	
+	
 
     -- Getters
 
@@ -50,12 +61,16 @@ feature {ANY}
 
 	get_type : STRING is
         do
-            Result := type
+        	if(type = " ") then 
+        		Result := "Inconnu"
+        	else 
+            	Result := type
+            end 
         end
 
 	get_liste_acteur : ARRAY[STRING] is
         do
-            Result := liste_acteur
+            Result := liste_acteurs
         end
 
 	-- Setters
@@ -80,30 +95,44 @@ feature {ANY}
             liste_acteurs := liste_acteursp
         end
 
+    -- Others
+    
+    ajouter_acteur(acteur : STRING) is 
+    	do
+    		liste_acteurs.force(acteur,liste_acteurs.count)
+    	end
+
+
+
 	afficher is
 		do
 			io.put_string("----------DVD----------%N")
 			io.put_string("Titre : " + titre + " %N")
-			io.put_string("Auteur : " + auteur + " %N")
+			io.put_string("Realisateur : " + realisateur + " %N")
 			io.put_string("Annee : " + annee.to_string + "%N") 
 			io.put_string("Nombre d'exemplaire : " + nombre.to_string + "%N") 
-            io.put_string("Realisateur : " + realisateur + " %N")
-            io.put_string("Type : " + type + " %N")
+            io.put_string("Acteur(s) : ") 
+            afficher_acteurs
+            io.put_string("%NType : " + type + " %N")
 		end
 
 	afficher_acteurs is 
 		local
 			i: INTEGER
-			taille_tab : integer
 		do	
-			taille_tab = liste_acteur.count
-			from
-			    i := 0
-			until
-			    i = liste_acteur
-		    loop
-			    io.put_string(liste_acteur.item(i) + "%N") 
-			    i := i+1
+			if(liste_acteurs.is_empty) then 
+				io.put_string("aucun acteurs%N")
+			else
+				
+
+				from
+			 	   i := 0
+				until
+			 	   i = liste_acteurs.count
+		    	loop
+			   		io.put_string(liste_acteurs.item(i) + " | ") 
+			   		i := i+1
+		    	end
 		    end
 		end 	
 

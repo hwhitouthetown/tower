@@ -16,12 +16,17 @@ feature {}
     liste_emprunts : ARRAY[EMPRUNT]
     liste_utilisateurs : ARRAY[UTILISATEUR] 
     
-    -- Méthode pour parser une ligne en fonction de son type
+    -- Méthode pour parser une ligne en fonction de son type (utilisateurs ou médias)
     parsing_line(line : STRING; type : STRING) is
         local
             i : INTEGER
+            type_courant : STRING -- mémorise le type de l utilisateur ou celui du média courant -- 
             dictionnaire : ARRAY[STRING]
+            m : MEDIA
+            u : UTILISATEUR
         do
+
+            type_courant :=""
 
             ------------ TRAITEMENT ----------------
 
@@ -47,36 +52,183 @@ feature {}
                 dictionnaire.item(i).left_adjust
                 dictionnaire.item(i).right_adjust
                 if (dictionnaire.item(i).count = 0) then
-              	    -- On supprime l'élément vide du tableau
+              	    -- On supprime l élément vide du tableau
                     dictionnaire.remove(i)
                 else
                     i := i+1
                 end
             end
 
-            ------------ AFFICHAGE ----------------
 
-            if (type.is_equal("medias")) then
-                i := 2
-                dictionnaire.item(1).right_adjust	
-                io.put_string("Type -- ")
-                io.put_string(dictionnaire.item(1))	
-                io.put_string("%N");
-            else
-                i := 1
-            end 	
-            from
-            until i > dictionnaire.count
-            loop
-                io.put_string(dictionnaire.item(i))
-                io.put_string(" -- ")
-                io.put_string(dictionnaire.item(i+1))
-                io.put_string("%N")	
-                i := i+2
-            end	
+            ------------ CONVERSION EN OBJET ----------------
+
+
+            inspect type 
+                when "medias" then 
+
+                    m := parsing_media(dictionnaire)
+                    ajouter_media(m)
+
+                when "utilisateurs" then 
+                  
+                    u:=parsing_user(dictionnaire)
+                    ajouter_utilisateur(u)
+              
+                else 
+                    io.put_string("Type de fichier inconnu conversion impossible")     
+
+            end 
+    
+
         end
 
-    -- Méthode pour parser un fichier, en fonction de son type
+
+
+    -- Fonction qui permet de transformer la chaine de caractère venant du parser line en objet de type "UTILISATEUR"    
+    parsing_user(dictionnaire : ARRAY[STRING]):UTILISATEUR  is 
+        local 
+            i : INTEGER 
+            cle : STRING
+            flag_admin : BOOLEAN
+            valeur : STRING
+            user : UTILISATEUR 
+            admin : ADMINISTRATEUR
+
+        do 
+                flag_admin := False
+                dictionnaire.item(1).right_adjust  
+                        
+                create user.make_empty_utilisateur
+                from
+                i := 1 
+                until i > dictionnaire.count
+                loop
+                    cle := ""
+                    valeur := ""
+                    cle.copy(dictionnaire.item(i))
+                    valeur.copy(dictionnaire.item(i+1))
+
+                    -- On verifie la cle  
+                    inspect cle 
+
+                        when "Nom" then 
+                            user.set_nom(valeur)
+                        when "Prenom" then
+                            user.set_prenom(valeur)
+                        when "Identifiant" then
+                            user.set_identifiant(valeur)
+                        when "Admin" then 
+                            create admin.make_admin_from_user(user)
+                            flag_admin := True 
+                        else 
+                            io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré %N");  
+                        end    
+                    i := i+2
+                end 
+
+            if(flag_admin) then 
+                Result := admin 
+            else 
+                Result := user    
+            end    
+
+
+        end    
+
+
+    -- Fonction qui permet de transformer la chaine de caractère venant du parser line en objet de type "MEDIA"    
+    parsing_media(dictionnaire : ARRAY[STRING]):MEDIA  is 
+        local 
+            i : INTEGER 
+            cle : STRING
+            valeur : STRING
+            livre : LIVRE 
+            dvd : DVD
+        do 
+                
+                dictionnaire.item(1).right_adjust   
+    
+                inspect dictionnaire.item(1)
+
+                    when "Livre" then
+                        i := 2                         
+                        create livre.make_empty_livre
+                        from
+                        until i > dictionnaire.count
+                        loop
+                            cle := ""
+                            valeur := ""
+                            cle.copy(dictionnaire.item(i))
+                            valeur.copy(dictionnaire.item(i+1))
+
+                            -- On verifie la cle  
+                            inspect cle 
+
+                                when "Titre" then 
+                                 livre.set_titre(valeur)
+                                when "Auteur" then
+                                 livre.set_auteur(valeur)
+                                when "Nombre" then
+                                 livre.set_nombre(valeur.to_integer)
+                                else 
+                                 io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré %N");  
+                            end    
+                            i := i+2
+                        end 
+
+                        if(livre.get_nombre=0) then 
+                            livre.set_nombre(1)
+                        end
+
+                        Result := livre
+
+                    
+                    when "DVD" then
+                        i := 2                       
+                        create dvd.make_empty_dvd
+                        from
+                        until i > dictionnaire.count
+                        loop
+                            cle := ""
+                            valeur := ""
+                            cle.copy(dictionnaire.item(i))
+                            valeur.copy(dictionnaire.item(i+1))
+
+                            -- On verifie la cle  
+                            inspect cle 
+
+                                when "Titre" then 
+                                    dvd.set_titre(valeur)
+                                when "Annee" then
+                                    dvd.set_annee(valeur.to_integer)
+                                when "Realisateur" then
+                                    dvd.set_realisateur(valeur)
+                                when "Acteur" then
+                                    dvd.ajouter_acteur(valeur)
+                                when "Type" then
+                                    dvd.set_type(valeur) 
+                                when "Nombre" then
+
+                                else 
+                                 io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré %N");  
+                            end    
+                            i := i+2
+                        end 
+
+                        if(dvd.get_nombre=0) then 
+                            dvd.set_nombre(1)
+                        end
+
+                        Result := dvd
+            end                  
+        end
+
+    
+
+
+
+
+    -- Méthode pour parser un fichier en fonction de son type (utilisateurs ou médias)
     parsing_file(file : STRING; type : STRING) is
         local
             text_reader : TEXT_FILE_READ
@@ -116,14 +268,22 @@ feature {ANY}
         do 
             nb_media := 0 
             nb_client := 0 
-			create liste_medias.make(1,1)
-			create liste_utilisateurs.make(1,1)
-			create liste_emprunts.make(1,1)
-            io.put_string("Bienvenue dans la mediatheque du futur :%N")
-            io.put_string("----- PARSING UTILISATEUR ------%N%N")	
+			create liste_medias.with_capacity(1,0)
+			create liste_utilisateurs.with_capacity(1,0)
+			create liste_emprunts.with_capacity(1,0)
+            io.put_string("Bienvenue dans la mediatheque du futur !")
             parsing_file("utilisateurs.txt", "utilisateurs")
-            io.put_string("-------- PARSING MEDIA ---------%N%N")	
             parsing_file("medias.txt", "medias")
+
+            
+            io.put_string("-------- UTILISATEURS ENREGISTRE ---------%N%N")
+            afficher_utilisateurs
+
+
+            io.put_string("-------- MEDIAS ENREGISTRE ---------%N%N")
+            afficher_medias  
+
+
             io.put_string("Fin du programme !%N")
         end
 
@@ -143,6 +303,61 @@ feature {ANY}
 				io.put_string("Création de l'emprunt KO : le média n'est pas empruntable%N")
 			end
 		end
-		
+
+
+    ajouter_media(media : MEDIA) is 
+        do
+            liste_medias.force(media,liste_medias.count)
+        end
+
+    afficher_medias is 
+    local
+            i: INTEGER
+        do  
+        
+
+            if(liste_medias.is_empty) then 
+                io.put_string("aucun media%N")
+            else 
+                from
+                   i := 0
+                until
+                   i = liste_medias.count
+                loop
+                    io.put_string("%N")
+                    liste_medias.item(i).afficher
+                    io.put_string("%N")
+                    i := i+1
+                end
+            end
+        end           
+	
+    ajouter_utilisateur(user : UTILISATEUR) is 
+    do
+        liste_utilisateurs.force(user,liste_utilisateurs.count)
+    end
+        
+    afficher_utilisateurs is 
+    local
+            i: INTEGER
+        do  
+        
+
+            if(liste_utilisateurs.is_empty) then 
+                io.put_string("aucun media%N")
+            else 
+                from
+                   i := 0
+                until
+                   i = liste_utilisateurs.count
+                loop
+                    io.put_string("%N")
+                    liste_utilisateurs.item(i).afficher
+                    io.put_string("%N")
+                    i := i+1
+                end
+            end
+        end           
+        	
 
 end -- class MEDIATHEQUE
