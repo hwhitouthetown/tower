@@ -12,15 +12,15 @@ feature {}
 feature {ANY}
 
 	make is
-	local
 		do
 
-		connect := 1
-		choix := 5
+		connect := 0
+		choix := 1
 
-         from
-            until choix = 0 
-            loop
+		end 
+
+	afficher_menu is 	
+	do
         	io.put_string(" ------------- BIENVENUE -------------%N")
         	io.put_string("| 1 - Consulter les médias            |%N")
         	
@@ -38,27 +38,21 @@ feature {ANY}
 			io.put_string(" -------------------------------------%N")
 		
 			io.put_string("%NEntrez votre choix %N")
-			io.read_integer
-			io.read_line -- FIX read_integer saute le prochain read_line
-			choix := io.last_integer
-		
-			
-
-			inspect choix
-			when 1 then
-				io.put_string("Médias %N")
-			when 2 then
-				if(connect = 0) then
-				io.put_string("Se connecter %N")
-				else 
-				io.put_string("Se déconnecter %N")
-				end
-			when 0 then
-				--quitter le programme
-				io.put_string("Vous quittez le programme %N")
-			else
-				io.put_string("Choix incorrect %N")
-			end -- inspect
-        end -- loop
 	end	
+
+
+	get_connect : INTEGER is 
+	do 
+		Result := connect
+	end 
+
+
+	set_connect(co : INTEGER) is 
+	do 
+		connect := co
+	end 
+
+
+
+        
 end -- class INTERFACE

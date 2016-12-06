@@ -19,6 +19,7 @@ feature {}
     liste_utilisateurs : ARRAY[UTILISATEUR]
     nb_emprunts_max : INTEGER 
     duree_emprunt_media : INTEGER 
+    choix : INTEGER
     
     -- Méthode pour parser une ligne en fonction de son type (utilisateurs ou médias)
     parsing_line(line : STRING; type : STRING) is
@@ -231,10 +232,6 @@ feature {}
             end                  
         end
 
-    
-
-
-
 
     -- Méthode pour parser un fichier en fonction de son type (utilisateurs ou médias)
     parsing_file(file : STRING; type : STRING) is
@@ -283,6 +280,7 @@ feature {ANY}
 
     make is
         do  
+            choix := 1
             nb_emprunts_max := 5 -- 5 emprunts max / utilisateur
             duree_emprunt_media := 30 -- 30 jours  
 			create liste_medias.with_capacity(1,0)
@@ -301,6 +299,36 @@ feature {ANY}
             afficher_medias  
 
             create interface.make
+
+              from
+            until choix = 0 
+            loop
+
+                interface.afficher_menu
+
+                io.read_integer
+                io.read_line -- FIX read_integer saute le prochain read_line
+                choix := io.last_integer
+        
+                inspect choix
+                when 1 then
+                  io.put_string("Médias %N")
+              when 2 then
+                    if(interface.get_connect = 0) then
+                       interface.set_connect(se_connecter)
+                    else 
+                        io.put_string("Se déconnecter %N")
+                    end -- endif
+                when 0 then
+                    --quitter le programme
+                    io.put_string("Vous quittez le programme %N")
+                else
+                    io.put_string("Choix incorrect %N")
+                end -- inspect
+
+            end -- loop 
+
+
 
             -- Test des emprunts
             io.put_string("-------- DEBUT DU TEST ---------%N%N")
@@ -364,9 +392,9 @@ feature {ANY}
         end           
 	
 
-    ------ Utilisateurs -------
+    ------ UTILISATEUR -------
 
-    utilisateur_exists(identifiant : STRING): BOOLEAN is 
+       utilisateur_exists(identifiant : STRING): BOOLEAN is 
     local
         user:UTILISATEUR
     do
@@ -380,6 +408,7 @@ feature {ANY}
     se_connecter:INTEGER is
     local 
         res : INTEGER
+        exist : BOOLEAN
         identifiant : STRING 
         motdepasse : STRING  
     do
@@ -391,10 +420,20 @@ feature {ANY}
         io.read_line
         identifiant := io.last_string
 
+        exist := utilisateur_exists(identifiant)
+
+        if exist then 
+            io.put_string("Merci de saisir votre mot de passe %N")
+            io.read_line
+
+            motdepasse := io.last_string
+
+        else 
+             io.put_string("Utilisateur inconnu %N")
+        end 
 
         Result := res
     end 
-
 
 
 
@@ -407,7 +446,6 @@ feature {ANY}
     local
             i: INTEGER
         do  
-        
 
             if(liste_utilisateurs.is_empty) then 
                 io.put_string("aucun media%N")
@@ -425,6 +463,8 @@ feature {ANY}
             end
         end  
         
+    --- FIN UTILISATEURS --        
+
     ajouter_emprunt(emprunt : EMPRUNT) is 
         do
             liste_emprunts.force(emprunt, liste_emprunts.count)
