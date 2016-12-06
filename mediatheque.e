@@ -12,6 +12,10 @@ creation {ANY}
     make
 
 feature {}
+
+    nb_media : INTEGER
+    nb_client : INTEGER
+    interface : INTERFACE
     liste_medias : ARRAY[MEDIA]
     liste_emprunts : ARRAY[EMPRUNT]
     liste_utilisateurs : ARRAY[UTILISATEUR]
@@ -26,6 +30,7 @@ feature {}
             dictionnaire : ARRAY[STRING]
             m : MEDIA
             u : UTILISATEUR
+           
         do
 
             type_courant :=""
@@ -129,8 +134,10 @@ feature {}
                 end 
 
             if(flag_admin) then 
+                admin.set_motdepasse(admin.get_identifiant)
                 Result := admin 
             else 
+                user.set_motdepasse(user.get_identifiant)
                 Result := user    
             end    
 
@@ -294,6 +301,8 @@ feature {ANY}
             io.put_string("-------- MEDIAS ENREGISTRES ---------%N%N")
             afficher_medias  
 
+            create interface.make
+
             -- Test des emprunts
             io.put_string("-------- DEBUT DU TEST ---------%N%N")
             test_emprunt
@@ -301,6 +310,8 @@ feature {ANY}
             io.put_string("Fin du programme !%N")
         end
 
+
+    ------ Emprunts --------
 	emprunter_media(utilisateur: UTILISATEUR; media: MEDIA;) is
 		local
             emp : EMPRUNT
@@ -325,7 +336,7 @@ feature {ANY}
 			end
 		end
 
-
+    ------ Medias --------
     ajouter_media(media : MEDIA) is 
         do
             liste_medias.force(media,liste_medias.count)
@@ -353,6 +364,41 @@ feature {ANY}
             end
         end           
 	
+
+    ------ Utilisateurs -------
+
+    utilisateur_exists(identifiant : STRING): BOOLEAN is 
+    local
+        user:UTILISATEUR
+    do
+        create user.make_empty_utilisateur
+        user.set_identifiant(identifiant)
+
+        Result := liste_utilisateurs.has(user)
+    end 
+
+
+    se_connecter:INTEGER is
+    local 
+        res : INTEGER
+        identifiant : STRING 
+        motdepasse : STRING  
+    do
+        res :=0 
+        identifiant := ""
+        motdepasse := ""
+
+        io.put_string("Merci de saisir votre identifiant %N")
+        io.read_line
+        identifiant := io.last_string
+
+
+        Result := res
+    end 
+
+
+
+
     ajouter_utilisateur(user : UTILISATEUR) is 
         do
             liste_utilisateurs.force(user,liste_utilisateurs.count)

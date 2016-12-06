@@ -1,6 +1,8 @@
-class UTILISATEUR
--- Represente un utilisateur
-	
+class UTILISATEUR inherit     
+    COMPARABLE 
+        redefine is_equal 
+    end
+
 creation {ANY}
     make_utilisateur,
     make_empty_utilisateur
@@ -14,6 +16,7 @@ feature {}
 
 
 feature {ANY}
+
 	
     make_utilisateur(nomp: STRING; prenomp: STRING; identifiantp: STRING) is
         do
@@ -42,6 +45,7 @@ feature {ANY}
         end    
 
 
+
     -- Getters
 
     get_nom : STRING is
@@ -63,6 +67,11 @@ feature {ANY}
         do
             Result := nb_emprunt
         end
+
+    get_motdepasse : STRING is 
+        do 
+            Result := motdepasse
+        end    
 
     -- Setters
 
@@ -86,6 +95,13 @@ feature {ANY}
             nb_emprunt := nb_empruntp
         end
 
+
+    set_motdepasse(modepasse: STRING) is
+        do
+            modepasse.copy(modepasse)
+        end
+    
+
     afficher is
 		do
 			io.put_string("----------- UTILISATEUR -----------%N")
@@ -93,5 +109,21 @@ feature {ANY}
 			io.put_string("Prenom :" + prenom + "%N")
 			io.put_string("Identifiant : " + identifiant + "%N") 
         end
+
+	peut_emprunter : BOOLEAN is
+		do
+			-- A implémenter
+		end
+
+
+    is_equal(other : UTILISATEUR) : BOOLEAN is
+        do
+            Result := identifiant.is_equal(other.get_identifiant)
+        end
+
+    infix "<" (other: UTILISATEUR) : BOOLEAN is
+        do  
+            Result := identifiant < other.get_identifiant
+        end    
 
 end -- class UTILISATEUR
