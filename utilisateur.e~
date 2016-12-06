@@ -94,4 +94,9 @@ feature {ANY}
 			io.put_string("Identifiant : " + identifiant + "%N") 
         end
 
+	peut_emprunter : BOOLEAN is
+		do
+			-- A implémenter
+		end
+
 end -- class UTILISATEUR

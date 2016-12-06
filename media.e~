@@ -6,7 +6,7 @@ creation {ANY}
 	make_empty_media
 
 feature {}
-	titre : STRING
+	titre: STRING
 	nombre : INTEGER
 
 feature {ANY}

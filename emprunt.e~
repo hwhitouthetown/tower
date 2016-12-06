@@ -93,7 +93,7 @@ feature {ANY}
     -- Méthode pour savoir si un emprunt a été retourné
     est_rendu : BOOLEAN is
         do
-            if date_rendu = date_debut  then
+            if date_rendu = Void then
                 Result := False
             else
                 Result := True

@@ -1,8 +1,10 @@
 class LIVRE inherit
-	MEDIA	
-        redefine
-            afficher
-        end 
+	MEDIA
+		rename
+			createur as auteur		
+		redefine
+			afficher
+	end 
 	
 creation {ANY}
 	make_livre,
