@@ -1,10 +1,6 @@
-class MEDIA
--- Represente un media
+deferred class MEDIA
+-- Represente un media abstrait (pas instanciable)
 	
-creation {ANY}
-	make_media,
-	make_empty_media
-
 feature {}
 	titre : STRING
 	nombre : INTEGER
@@ -16,21 +12,6 @@ feature {ANY}
 			io.put_string("Titre : " + titre + "%N")
 			io.put_string("Nombre d'exemplaire : " + nombre.to_string + "%N") 
 		end
-
-	make_media (titrep: STRING; nombrep: INTEGER) is
-		do
-			titre := ""
-			titre.copy(titrep)
-			
-			nombre := 0
-			nombre.copy(nombrep)
-		end
-
-	make_empty_media is
-		do
-			titre := ""
-			nombre := 0
-		end	
 
 	-- Getters
 

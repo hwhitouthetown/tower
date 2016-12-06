@@ -10,8 +10,6 @@ creation {ANY}
     make
 
 feature {}
-    nb_media : INTEGER
-    nb_client : INTEGER
     liste_medias : ARRAY[MEDIA]
     liste_emprunts : ARRAY[EMPRUNT]
     liste_utilisateurs : ARRAY[UTILISATEUR]
@@ -89,6 +87,7 @@ feature {}
     -- Fonction qui permet de transformer la chaine de caractère venant du parser line en objet de type "UTILISATEUR"    
     parsing_user(dictionnaire : ARRAY[STRING]): UTILISATEUR  is 
         local 
+
             i : INTEGER 
             cle : STRING
             flag_admin : BOOLEAN
@@ -266,10 +265,17 @@ feature {}
 
 feature {ANY}
 
+    test_emprunt is 
+        do
+            io.put_string("NB medias : " + liste_medias.count.to_string + "%N")
+            io.put_string("NB utilisateurs : " + liste_utilisateurs.count.to_string + "%N")
+            io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
+            emprunter_media(liste_utilisateurs@1, liste_medias@1)
+            io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
+        end
+
     make is
-        do 
-            nb_media := 0 
-            nb_client := 0 
+        do  
             nb_emprunts_max := 5 -- 5 emprunts max / utilisateur
             duree_emprunt_media := 30 -- 30 jours  
 			create liste_medias.with_capacity(1,0)
@@ -288,6 +294,10 @@ feature {ANY}
             afficher_medias  
 
 
+            -- Test des emprunts
+            io.put_string("-------- DEBUT DU TEST ---------%N%N")
+            test_emprunt
+
             io.put_string("Fin du programme !%N")
         end
 
@@ -302,11 +312,11 @@ feature {ANY}
 					date_limite.update
 					date_limite.add_day(duree_emprunt_media)
 					create emp.make_emprunt(utilisateur, media, date_limite)
-					liste_emprunts.add_last(emp)
+					ajouter_emprunt(emp)
 					io.put_string("Création de l'emprunt OK%N")
 					-- Test date
 					test.update
-					io.put_string("Fait le " + date_string(test) + " --> rendu max le " + date_string(date_limite))
+					io.put_string("Fait le " + date_string(test) + " --> rendu max le " + date_string(date_limite) + "%N")
 				else
 					io.put_string("Création de l'emprunt KO : l'utilisateur ne peut pas emprunter%N")
 				end		
@@ -344,9 +354,9 @@ feature {ANY}
         end           
 	
     ajouter_utilisateur(user : UTILISATEUR) is 
-    do
-        liste_utilisateurs.force(user,liste_utilisateurs.count)
-    end
+        do
+            liste_utilisateurs.force(user,liste_utilisateurs.count)
+        end
         
     afficher_utilisateurs is 
     local
@@ -368,7 +378,12 @@ feature {ANY}
                     i := i+1
                 end
             end
-        end           
+        end  
+        
+    ajouter_emprunt(emprunt : EMPRUNT) is 
+        do
+            liste_emprunts.force(emprunt, liste_emprunts.count)
+        end         
         	  	
     -- Méthode pour savoir si un utilisateur peut emprunter un media
     peut_emprunter(u : UTILISATEUR) : BOOLEAN is

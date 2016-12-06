@@ -23,7 +23,13 @@ feature {ANY}
 			create liste_acteurs.with_capacity(1,0)
 			liste_acteurs.copy(liste_acteursi)
 
-			make_media(titrei, nombrei)
+			--make_media(titrei, nombrei)
+			
+			titre := ""
+			titre.copy(titrei)
+			
+			nombre := 0
+			nombre.copy(nombrei)
 
 			annee := 0 
 			annee.copy(anneei)
@@ -37,7 +43,9 @@ feature {ANY}
 
 	make_empty_dvd is 
 		do
-			make_empty_media 
+			--make_empty_media 
+			titre := ""
+			nombre := 0
 			realisateur := ""
 			type := ""
 			annee := 0

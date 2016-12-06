@@ -16,14 +16,25 @@ feature {ANY}
 
 	make_livre(titrei: STRING; nombrei : INTEGER; auteuri : STRING) is
 		do
-			make_media(titrei, nombrei)
+			--make_media(titrei, nombrei)
+			
+			titre := ""
+			titre.copy(titrei)
+			
+			nombre := 0
+			nombre.copy(nombrei)
+			
 			auteur := ""
 			auteur.copy(auteuri)
+			
+			
 		end
 
 	make_empty_livre is 
 		do
-			make_empty_media 
+			--make_empty_media 
+			titre := ""
+			nombre := 0
 			auteur := ""
 		end	
 
