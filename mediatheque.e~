@@ -426,10 +426,10 @@ feature {ANY}
             from 
                 i := 1
             until
-                i = liste_utilisateurs.count
+                i = liste_medias.count
             loop
-                if liste_utilisateurs@i = utilisateur then
-                    liste_utilisateurs.remove(i)
+                if liste_medias@i = media then
+                    liste_medias.remove(i)
                 else     
                     i := i + 1 
                 end
