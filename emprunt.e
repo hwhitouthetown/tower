@@ -7,21 +7,21 @@ creation {ANY}
 feature {}
 	utilisateur: UTILISATEUR 
 	media : MEDIA
-	date_emprunt : TIME 
-	rendu : BOOLEAN
+	date_debut, date_rendu, date_limite : TIME
 
 feature {ANY}
 
-	make_emprunt (utilisateurp: UTILISATEUR; mediap: MEDIA) is
-		local
-			time : TIME		
-		do
-			time.update
-			utilisateur := utilisateurp
-			media := mediap
-			date_emprunt := time
-			rendu := False
-		end	
+	make_emprunt (utilisateurp: UTILISATEUR; mediap: MEDIA; date_limitep: TIME) is
+            local
+                time : TIME		
+            do
+                time.update
+                utilisateur := utilisateurp
+                media := mediap
+                date_debut := time
+                date_limite := date_limitep
+                date_rendu := date_debut -- Si égales, c'est que l'emprunt n'a pas été rendu
+            end	
 
 	-- Getters
 
@@ -35,14 +35,19 @@ feature {ANY}
             Result := media 
         end
 
-	get_date_emprunt : TIME is
+	get_date_debut : TIME is
         do
-            Result := date_emprunt
+            Result := date_debut
         end
-
-	get_rendu : BOOLEAN is
+        
+    get_date_limite : TIME is
         do
-            Result := rendu
+            Result := date_limite
+        end
+        
+    get_date_rendu : TIME is
+        do
+            Result := date_rendu
         end
 
 	-- Setters
@@ -57,14 +62,42 @@ feature {ANY}
             media := mediap
         end
 
-	set_date_emprunt(date_empruntp: TIME) is
+	set_date_debut(date_debutp: TIME) is
         do
-            date_emprunt := date_empruntp
+            date_debut := date_debutp
         end
 
-	set_rendu(rendup: BOOLEAN) is
+	set_date_limite(date_limitep: TIME) is
         do
-            rendu := rendup
+            date_limite := date_limitep
+        end
+        
+    set_date_rendu(date_rendup: TIME) is
+        do
+            date_rendu := date_rendup
+        end
+        
+    -- Méthode pour savoir si un emprunt est en retard
+    a_retard : BOOLEAN is
+        local
+            current_time : TIME	
+        do
+            current_time.update
+            if current_time >= date_limite then
+                Result := True
+             else
+                Result := False
+            end
+        end
+        
+    -- Méthode pour savoir si un emprunt a été retourné
+    est_rendu : BOOLEAN is
+        do
+            if date_rendu = date_debut  then
+                Result := False
+            else
+                Result := True
+            end
         end
 
 end -- class EMPRUNT

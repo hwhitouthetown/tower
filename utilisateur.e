@@ -11,7 +11,8 @@ feature {}
 	nom: STRING
     prenom: STRING
     identifiant: STRING
-    motdepasse : STRING 
+    motdepasse : STRING
+    nb_emprunt : INTEGER
 
 
 feature {ANY}
@@ -30,6 +31,8 @@ feature {ANY}
 
             motdepasse := ""
             motdepasse.copy(identifiantp)
+            
+            nb_emprunt := 0
         end
 
     make_empty_utilisateur is
@@ -38,8 +41,10 @@ feature {ANY}
             prenom := ""
             identifiant := ""
             motdepasse := ""
-        end  
-      
+            nb_emprunt := 0
+        end    
+
+
 
     -- Getters
 
@@ -56,6 +61,11 @@ feature {ANY}
     get_identifiant : STRING is
         do
             Result := identifiant
+        end
+        
+    get_nb_emprunt : INTEGER is
+        do
+            Result := nb_emprunt
         end
 
     get_motdepasse : STRING is 
@@ -78,6 +88,11 @@ feature {ANY}
     set_identifiant(identifiantp: STRING) is
         do
             identifiant.copy(identifiantp)
+        end
+        
+    set_nb_emprunt(nb_empruntp : INTEGER) is
+        do
+            nb_emprunt := nb_empruntp
         end
 
 

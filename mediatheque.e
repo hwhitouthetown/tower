@@ -10,12 +10,15 @@ creation {ANY}
     make
 
 feature {}
+
     nb_media : INTEGER
     nb_client : INTEGER
     interface : INTERFACE
     liste_medias : ARRAY[MEDIA]
     liste_emprunts : ARRAY[EMPRUNT]
-    liste_utilisateurs : ARRAY[UTILISATEUR] 
+    liste_utilisateurs : ARRAY[UTILISATEUR]
+    nb_emprunts_max : INTEGER 
+    duree_emprunt_media : INTEGER 
     
     -- Méthode pour parser une ligne en fonction de son type (utilisateurs ou médias)
     parsing_line(line : STRING; type : STRING) is
@@ -87,8 +90,9 @@ feature {}
 
 
     -- Fonction qui permet de transformer la chaine de caractère venant du parser line en objet de type "UTILISATEUR"    
-    parsing_user(dictionnaire : ARRAY[STRING]):UTILISATEUR  is 
+    parsing_user(dictionnaire : ARRAY[STRING]): UTILISATEUR  is 
         local 
+
             i : INTEGER 
             cle : STRING
             flag_admin : BOOLEAN
@@ -175,7 +179,7 @@ feature {}
                                 when "Nombre" then
                                  livre.set_nombre(valeur.to_integer)
                                 else 
-                                 io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré %N");  
+                                 io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré%N");  
                             end    
                             i := i+2
                         end 
@@ -259,19 +263,28 @@ feature {}
         end
         text_reader.disconnect  	  
     end
-
-    -- Méthode pour avoir une date en chaine de cararctères
-    date_to_string(date : TIME) : STRING is
-		do
-			Result := date.day.to_string + "/" + date.month.to_string + "/" + date.year.to_string
-		end
+		
+	-- Méthode pour avoir une date en chaine de cararctères
+	date_string(date: TIME) : STRING is
+	    do
+	        Result := date.day.to_string + "/" + date.month.to_string + "/" + date.year.to_string
+	    end
 
 feature {ANY}
 
+    test_emprunt is 
+        do
+            io.put_string("NB medias : " + liste_medias.count.to_string + "%N")
+            io.put_string("NB utilisateurs : " + liste_utilisateurs.count.to_string + "%N")
+            io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
+            emprunter_media(liste_utilisateurs@1, liste_medias@1)
+            io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
+        end
+
     make is
-        do 
-            nb_media := 0 
-            nb_client := 0 
+        do  
+            nb_emprunts_max := 5 -- 5 emprunts max / utilisateur
+            duree_emprunt_media := 30 -- 30 jours  
 			create liste_medias.with_capacity(1,0)
 			create liste_utilisateurs.with_capacity(1,0)
 			create liste_emprunts.with_capacity(1,0)
@@ -289,6 +302,10 @@ feature {ANY}
 
             create interface.make
 
+            -- Test des emprunts
+            io.put_string("-------- DEBUT DU TEST ---------%N%N")
+            test_emprunt
+
             io.put_string("Fin du programme !%N")
         end
 
@@ -297,12 +314,19 @@ feature {ANY}
 	emprunter_media(utilisateur: UTILISATEUR; media: MEDIA;) is
 		local
             emp : EMPRUNT
+            date_limite, test : TIME
 		do
 			if media.est_empruntable then
-				if utilisateur.peut_emprunter then
-					create emp.make_emprunt(utilisateur, media)
-					liste_emprunts.add_last(emp)
+				if peut_emprunter(utilisateur) then
+				    -- utilisateurp: UTILISATEUR; mediap: MEDIA; TIME: date_limitep
+					date_limite.update
+					date_limite.add_day(duree_emprunt_media)
+					create emp.make_emprunt(utilisateur, media, date_limite)
+					ajouter_emprunt(emp)
 					io.put_string("Création de l'emprunt OK%N")
+					-- Test date
+					test.update
+					io.put_string("Fait le " + date_string(test) + " --> rendu max le " + date_string(date_limite) + "%N")
 				else
 					io.put_string("Création de l'emprunt KO : l'utilisateur ne peut pas emprunter%N")
 				end		
@@ -375,9 +399,9 @@ feature {ANY}
 
 
     ajouter_utilisateur(user : UTILISATEUR) is 
-    do
-        liste_utilisateurs.force(user,liste_utilisateurs.count)
-    end
+        do
+            liste_utilisateurs.force(user,liste_utilisateurs.count)
+        end
         
     afficher_utilisateurs is 
     local
@@ -399,7 +423,21 @@ feature {ANY}
                     i := i+1
                 end
             end
-        end           
-        	
+        end  
+        
+    ajouter_emprunt(emprunt : EMPRUNT) is 
+        do
+            liste_emprunts.force(emprunt, liste_emprunts.count)
+        end         
+        	  	
+    -- Méthode pour savoir si un utilisateur peut emprunter un media
+    peut_emprunter(u : UTILISATEUR) : BOOLEAN is
+        do
+            if u.get_nb_emprunt >= nb_emprunts_max then
+                Result := False
+            else
+                Result := True
+            end
+        end
 
 end -- class MEDIATHEQUE

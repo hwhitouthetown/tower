@@ -1,28 +1,40 @@
 class LIVRE inherit
-	MEDIA
-		rename
-			createur as auteur		
-		redefine
-			afficher
-	end 
+	MEDIA	
+        redefine
+            afficher
+        end 
 	
 creation {ANY}
 	make_livre,
 	make_empty_livre  
- 
+	
+feature {}
+
+    auteur : STRING 
 
 feature {ANY}
 
-	make_livre(titrei: STRING; createuri :STRING; nombrei : INTEGER; auteuri : STRING) is
+	make_livre(titrei: STRING; nombrei : INTEGER; auteuri : STRING) is
 		do
-			make_media(titrei, createuri, nombrei)
+			--make_media(titrei, nombrei)
+			
+			titre := ""
+			titre.copy(titrei)
+			
+			nombre := 0
+			nombre.copy(nombrei)
+			
 			auteur := ""
 			auteur.copy(auteuri)
+			
+			
 		end
 
 	make_empty_livre is 
 		do
-			make_empty_media 
+			--make_empty_media 
+			titre := ""
+			nombre := 0
 			auteur := ""
 		end	
 

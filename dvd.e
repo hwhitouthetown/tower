@@ -1,10 +1,8 @@
 class DVD inherit
 	MEDIA
-		rename
-			createur as realisateur		
-		redefine
+        redefine
 			afficher
-	end 
+        end 
 	
 creation {ANY}
 	make_dvd, 
@@ -14,17 +12,24 @@ feature {}
 	annee : INTEGER
 	type : STRING
 	liste_acteurs : ARRAY[STRING]
+	realisateur : STRING
 
 feature {ANY}
 
-	make_dvd(titrei: STRING; createuri :STRING; nombrei : INTEGER;
+	make_dvd(titrei: STRING; nombrei : INTEGER;
 			   anneei : INTEGER; liste_acteursi : ARRAY[STRING];
                realisateuri : STRING; typei : STRING) is
 		do
 			create liste_acteurs.with_capacity(1,0)
 			liste_acteurs.copy(liste_acteursi)
 
-			make_media(titrei, createuri, nombrei)
+			--make_media(titrei, nombrei)
+			
+			titre := ""
+			titre.copy(titrei)
+			
+			nombre := 0
+			nombre.copy(nombrei)
 
 			annee := 0 
 			annee.copy(anneei)
@@ -38,7 +43,9 @@ feature {ANY}
 
 	make_empty_dvd is 
 		do
-			make_empty_media 
+			--make_empty_media 
+			titre := ""
+			nombre := 0
 			realisateur := ""
 			type := ""
 			annee := 0
