@@ -5,6 +5,8 @@ class MEDIATHEQUE
 -- git add * 
 -- git commit
 -- git push
+-- Suppresion des fichiers temporaires : rm *\~*
+-- Quitter et save VIM : Echap -> x! -> Entrée
 	
 creation {ANY}
     make
@@ -104,7 +106,6 @@ feature {}
         do 
                 flag_admin := False
                 dictionnaire.item(1).right_adjust  
-                        
                 create user.make_empty_utilisateur
                 from
                 i := 1 
@@ -276,6 +277,8 @@ feature {ANY}
             io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
             emprunter_media(liste_utilisateurs@1, liste_medias@1)
             io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
+            supprimer_media(liste_medias@4)
+            io.put_string("NB medias : " + liste_medias.count.to_string + "%N")
         end
 
     make is
@@ -289,13 +292,11 @@ feature {ANY}
             io.put_string("Bienvenue dans la mediatheque du futur !")
             parsing_file("utilisateurs.txt", "utilisateurs")
             parsing_file("medias.txt", "medias")
-
             
-            io.put_string("-------- UTILISATEURS ENREGISTRE ---------%N%N")
+            io.put_string("-------- UTILISATEURS ENREGISTRES ---------%N%N")
             afficher_utilisateurs
 
-
-            io.put_string("-------- MEDIAS ENREGISTRE ---------%N%N")
+            io.put_string("-------- MEDIAS ENREGISTRES ---------%N%N")
             afficher_medias  
 
             create interface.make
@@ -479,5 +480,48 @@ feature {ANY}
                 Result := True
             end
         end
+        
+        
+        
+    -- CRUD Media
+    
+    supprimer_media(media : MEDIA) is
+        local
+            i : INTEGER
+        do
+            from 
+                i := 1
+            until
+                i = liste_medias.count
+            loop
+                if liste_medias@i = media then
+                    liste_medias.remove(i)
+                else     
+                    i := i + 1 
+                end
+            end
+        end
+        
+        
+    -- CRUD Utilisateur
+        
+    supprimer_utilisateur(utilisateur : UTILISATEUR) is
+        local
+            i : INTEGER
+        do
+            from 
+                i := 1
+            until
+                i = liste_utilisateurs.count
+            loop
+                if liste_utilisateurs@i = utilisateur then
+                    liste_utilisateurs.remove(i)
+                else     
+                    i := i + 1 
+                end
+            end
+        end
+        
+        
 
 end -- class MEDIATHEQUE

@@ -7,7 +7,9 @@ creation {ANY}
 feature {}
 	utilisateur: UTILISATEUR 
 	media : MEDIA
-	date_debut, date_rendu, date_limite : TIME
+	date_debut : TIME -- Date de l'emprunts
+	date_rendu : TIME -- Date à laquelle l'emprunt est rendu
+	date_limite : TIME -- Date maximale de rendu, l'emprunt est en retard à partir de celle-ci
 
 feature {ANY}
 
