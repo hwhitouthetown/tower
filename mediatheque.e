@@ -443,10 +443,11 @@ feature {ANY}
             io.put_string("Merci de saisir votre mot de passe %N")
             io.read_line
             motdepasse_saisie := io.last_string
-             io.put_string("Mot de passe saisie : '"+ motdepasse_saisie +"' %N")
 
             if motdepasse_saisie.is_equal(user.get_motdepasse) then 
                 io.put_string("Vous êtes connecté, bienvenue "+ user.get_prenom +"%N")
+                --- TODO ajout if avec test de classe user ou admin -- 
+                interface.set_connect(1)
             else  
                 io.put_string("Erreur, mot de passe incorrect !")
             end
