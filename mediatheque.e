@@ -317,7 +317,7 @@ feature {ANY}
                     if(interface.get_connect = 0) then
                        interface.set_connect(se_connecter)
                     else 
-                        io.put_string("Se déconnecter %N")
+                        interface.set_connect(0)
                     end -- endif
                 when 0 then
                     --quitter le programme
@@ -398,16 +398,14 @@ feature {ANY}
     get_user_object(identifiant : STRING): UTILISATEUR is 
     local
         user:UTILISATEUR
-        mdp:STRING
         position:INTEGER
     do
         create user.make_empty_utilisateur
         user.set_identifiant(identifiant)
 
         position := liste_utilisateurs.index_of(user,0)
-             io.put_string("pos :" + position.to_string)
+
         if position = liste_utilisateurs.upper + 1 then 
-            io.put_string("notfound")
             user.set_identifiant("notfound")
         else 
             user := liste_utilisateurs.item(position)
@@ -435,9 +433,7 @@ feature {ANY}
 
         user.copy(get_user_object(identifiant))
 
-        user.afficher
-
-        if user.get_identifiant = "notfound" then 
+        if user.get_identifiant.is_equal("notfound") then 
             io.put_string("Utilisateur inconnu %N")
         else 
             io.put_string("Merci de saisir votre mot de passe %N")
@@ -447,7 +443,16 @@ feature {ANY}
             if motdepasse_saisie.is_equal(user.get_motdepasse) then 
                 io.put_string("Vous êtes connecté, bienvenue "+ user.get_prenom +"%N")
                 --- TODO ajout if avec test de classe user ou admin -- 
-                interface.set_connect(1)
+                res:=1
+
+                if motdepasse_saisie.is_equal(user.get_identifiant) then 
+                    io.put_string("Première connection ? Pour des raisons de sécurité merci de changer votre mot de passe %N")
+                    user.init_motdepasse
+
+                else 
+
+                end 
+
             else  
                 io.put_string("Erreur, mot de passe incorrect !")
             end

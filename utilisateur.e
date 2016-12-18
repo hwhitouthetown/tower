@@ -42,7 +42,70 @@ feature {ANY}
             identifiant := ""
             motdepasse := ""
             nb_emprunt := 0
-        end    
+        end
+
+
+    init_motdepasse is 
+    local 
+        motdepasse_saisie: STRING 
+        motdepasse_resaisie: STRING
+    do
+
+        
+        from
+            motdepasse_saisie := "motdepasse_saisie"
+            motdepasse_resaisie := "motdepasse_resaisie"
+        until
+            motdepasse_saisie.is_equal(motdepasse_resaisie)
+        loop
+
+            io.put_string("Merci de saisir votre nouveau mot de passe %N")
+            io.read_line
+            motdepasse_saisie.copy(io.last_string)
+
+            io.put_string("Merci de confirmer votre nouveau mot de passe %N")
+            io.read_line
+            motdepasse_resaisie.copy(io.last_string)
+
+            if motdepasse_saisie.is_equal(motdepasse_resaisie) then 
+                io.put_string("Votre mot de passe à bien été modifié %N")
+                motdepasse.copy(motdepasse_resaisie)
+            else 
+                io.put_string("Erreur les mots de passe saisie sont différents %N")
+            end    
+            
+        end 
+
+
+
+    end    
+
+
+
+
+    modifier_motdepasse: INTEGER is
+    local
+        motdepasse_saisie : STRING  
+        res : INTEGER
+    do
+       
+        motdepasse_saisie := ""
+
+        io.put_string("Merci de saisir votre mot de passe actuel %N")
+        io.read_line
+        motdepasse_saisie := io.last_string
+
+        if motdepasse_saisie.is_equal(motdepasse) then 
+            init_motdepasse
+            res := 0
+        else
+            io.put_string("Mot de passe incorrect vous allez être déconnecté %N")
+            res := -1
+        end
+
+        Result := res
+
+    end 
 
 
 
@@ -108,8 +171,6 @@ feature {ANY}
 			io.put_string("Nom : " + nom + "%N")
 			io.put_string("Prenom :" + prenom + "%N")
 			io.put_string("Identifiant : " + identifiant + "%N") 
-            --- DO TO suppr après test ----
-            io.put_string("Mdp : " + motdepasse + "%N") 
         end
 
 	peut_emprunter : BOOLEAN is
