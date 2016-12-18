@@ -22,7 +22,7 @@ feature {ANY}
 	make_admin_from_user(u:UTILISATEUR) is 
 		do
 			make_admin(u.get_nom,u.get_prenom,u.get_identifiant)
-			motdepasse := "admin"
+			motdepasse := u.get_motdepasse
 		end
 
 

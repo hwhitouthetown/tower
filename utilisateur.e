@@ -96,9 +96,9 @@ feature {ANY}
         end
 
 
-    set_motdepasse(modepasse: STRING) is
+    set_motdepasse(modepassep: STRING) is
         do
-            modepasse.copy(modepasse)
+            motdepasse.copy(modepassep)
         end
     
 
@@ -108,6 +108,8 @@ feature {ANY}
 			io.put_string("Nom : " + nom + "%N")
 			io.put_string("Prenom :" + prenom + "%N")
 			io.put_string("Identifiant : " + identifiant + "%N") 
+            --- DO TO suppr après test ----
+            io.put_string("Mdp : " + motdepasse + "%N") 
         end
 
 	peut_emprunter : BOOLEAN is

@@ -125,6 +125,7 @@ feature {}
                             user.set_prenom(valeur)
                         when "Identifiant" then
                             user.set_identifiant(valeur)
+                            user.set_motdepasse(valeur)
                         when "Admin" then 
                             create admin.make_admin_from_user(user)
                             flag_admin := True 
@@ -135,10 +136,8 @@ feature {}
                 end 
 
             if(flag_admin) then 
-                admin.set_motdepasse(admin.get_identifiant)
                 Result := admin 
             else 
-                user.set_motdepasse(user.get_identifiant)
                 Result := user    
             end    
 
@@ -395,42 +394,62 @@ feature {ANY}
 
     ------ UTILISATEUR -------
 
-       utilisateur_exists(identifiant : STRING): BOOLEAN is 
+    -- Retourne l'objet utilisateur correspondant si pas utilisateur retourne nu utilisateur avec  l'id "notfound"
+    get_user_object(identifiant : STRING): UTILISATEUR is 
     local
         user:UTILISATEUR
+        mdp:STRING
+        position:INTEGER
     do
         create user.make_empty_utilisateur
         user.set_identifiant(identifiant)
 
-        Result := liste_utilisateurs.has(user)
+        position := liste_utilisateurs.index_of(user,0)
+             io.put_string("pos :" + position.to_string)
+        if position = liste_utilisateurs.upper + 1 then 
+            io.put_string("notfound")
+            user.set_identifiant("notfound")
+        else 
+            user := liste_utilisateurs.item(position)
+        end
+
+        Result := user
     end 
 
 
     se_connecter:INTEGER is
     local 
+        user : UTILISATEUR
         res : INTEGER
-        exist : BOOLEAN
         identifiant : STRING 
-        motdepasse : STRING  
+        motdepasse_saisie : STRING  
     do
         res :=0 
         identifiant := ""
-        motdepasse := ""
+        motdepasse_saisie := ""
+        create user.make_empty_utilisateur
 
         io.put_string("Merci de saisir votre identifiant %N")
         io.read_line
         identifiant := io.last_string
 
-        exist := utilisateur_exists(identifiant)
+        user.copy(get_user_object(identifiant))
 
-        if exist then 
+        user.afficher
+
+        if user.get_identifiant = "notfound" then 
+            io.put_string("Utilisateur inconnu %N")
+        else 
             io.put_string("Merci de saisir votre mot de passe %N")
             io.read_line
+            motdepasse_saisie := io.last_string
+             io.put_string("Mot de passe saisie : '"+ motdepasse_saisie +"' %N")
 
-            motdepasse := io.last_string
-
-        else 
-             io.put_string("Utilisateur inconnu %N")
+            if motdepasse_saisie.is_equal(user.get_motdepasse) then 
+                io.put_string("Vous êtes connecté, bienvenue "+ user.get_prenom +"%N")
+            else  
+                io.put_string("Erreur, mot de passe incorrect !")
+            end
         end 
 
         Result := res
@@ -462,7 +481,26 @@ feature {ANY}
                     i := i+1
                 end
             end
-        end  
+        end
+
+        
+    supprimer_utilisateur(utilisateur : UTILISATEUR) is
+        local
+            i : INTEGER
+        do
+            from 
+                i := 1
+            until
+                i = liste_utilisateurs.count
+            loop
+                if liste_utilisateurs@i = utilisateur then
+                    liste_utilisateurs.remove(i)
+                else     
+                    i := i + 1 
+                end
+            end
+        end
+              
         
     --- FIN UTILISATEURS --        
 
@@ -502,26 +540,7 @@ feature {ANY}
             end
         end
         
-        
-    -- CRUD Utilisateur
-        
-    supprimer_utilisateur(utilisateur : UTILISATEUR) is
-        local
-            i : INTEGER
-        do
-            from 
-                i := 1
-            until
-                i = liste_utilisateurs.count
-            loop
-                if liste_utilisateurs@i = utilisateur then
-                    liste_utilisateurs.remove(i)
-                else     
-                    i := i + 1 
-                end
-            end
-        end
-        
+
         
 
 end -- class MEDIATHEQUE
