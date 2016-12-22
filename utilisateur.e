@@ -45,6 +45,33 @@ feature {ANY}
         end
 
 
+    modifier_utilisateur_saisie(identifiantp: STRING) is
+        do
+            io.put_string("Saisir le nom ?")
+            io.read_line               
+            nom.copy(io.last_string)
+            
+            io.put_string("Saisir le prenom ?")
+            io.read_line  
+            prenom.copy(io.last_string)
+
+            identifiant := ""
+            identifiant.copy(identifiantp)
+
+            motdepasse := ""
+
+            init_motdepasse
+            
+            nb_emprunt := 0
+
+            afficher
+
+            io.put_string("Modification terminée %N")
+
+        end    
+
+
+
     init_motdepasse is 
     local 
         motdepasse_saisie: STRING 

@@ -9,7 +9,7 @@ class MEDIATHEQUE
 -- Quitter et save VIM : Echap -> x! -> Entrée
 	
 creation {ANY}
-    make
+    make_mediatheque
 
 feature {}
 
@@ -21,7 +21,10 @@ feature {}
     liste_utilisateurs : ARRAY[UTILISATEUR]
     nb_emprunts_max : INTEGER 
     duree_emprunt_media : INTEGER 
-    choix : INTEGER
+    choix_general : INTEGER
+    choix_user : INTEGER
+    choix_media : INTEGER 
+    choix_emprunt : INTEGER
     
     -- Méthode pour parser une ligne en fonction de son type (utilisateurs ou médias)
     parsing_line(line : STRING; type : STRING) is
@@ -280,10 +283,14 @@ feature {ANY}
             io.put_string("NB medias : " + liste_medias.count.to_string + "%N")
         end
 
-    make is
+    make_mediatheque is
         do  
-            choix := 1
+            choix_general := 1
+            choix_user := 1 
+            choix_media := 1 
+            choix_emprunt := 1
             nb_emprunts_max := 5 -- 5 emprunts max / utilisateur
+
             duree_emprunt_media := 30 -- 30 jours  
 			create liste_medias.with_capacity(1,0)
 			create liste_utilisateurs.with_capacity(1,0)
@@ -297,39 +304,7 @@ feature {ANY}
 
             io.put_string("-------- MEDIAS ENREGISTRES ---------%N%N")
             afficher_medias  
-
-            create interface.make
-
-              from
-            until choix = 0 
-            loop
-
-                interface.afficher_menu
-
-                io.read_integer
-                io.read_line -- FIX read_integer saute le prochain read_line
-                choix := io.last_integer
-        
-                inspect choix
-                when 1 then
-                  io.put_string("Médias %N")
-              when 2 then
-                    if(interface.get_connect = 0) then
-                       interface.set_connect(se_connecter)
-                    else 
-                        interface.set_connect(0)
-                    end -- endif
-                when 0 then
-                    --quitter le programme
-                    io.put_string("Vous quittez le programme %N")
-                else
-                    io.put_string("Choix incorrect %N")
-                end -- inspect
-
-            end -- loop 
-
-
-
+            
             -- Test des emprunts
             io.put_string("-------- DEBUT DU TEST ---------%N%N")
             test_emprunt
@@ -392,7 +367,7 @@ feature {ANY}
         end           
 	
 
-    ------ UTILISATEUR -------
+    --------- UTILISATEUR -----------
 
     -- Retourne l'objet utilisateur correspondant si pas utilisateur retourne nu utilisateur avec  l'id "notfound"
     get_user_object(identifiant : STRING): UTILISATEUR is 
@@ -414,58 +389,38 @@ feature {ANY}
         Result := user
     end 
 
-
-    se_connecter:INTEGER is
-    local 
+    get_admin_object(identifiant : STRING): ADMINISTRATEUR is 
+    local
         user : UTILISATEUR
-        res : INTEGER
-        identifiant : STRING 
-        motdepasse_saisie : STRING  
+        admin:ADMINISTRATEUR
+        position:INTEGER
     do
-        res :=0 
-        identifiant := ""
-        motdepasse_saisie := ""
         create user.make_empty_utilisateur
+        create admin.make_empty_admin
 
-        io.put_string("Merci de saisir votre identifiant %N")
-        io.read_line
-        identifiant := io.last_string
+        admin.set_identifiant(identifiant)
 
-        user.copy(get_user_object(identifiant))
+        position := liste_utilisateurs.index_of(admin,0)
 
-        if user.get_identifiant.is_equal("notfound") then 
-            io.put_string("Utilisateur inconnu %N")
+        if position = liste_utilisateurs.upper + 1 then 
+            admin.set_identifiant("notfound")
         else 
-            io.put_string("Merci de saisir votre mot de passe %N")
-            io.read_line
-            motdepasse_saisie := io.last_string
+            user := liste_utilisateurs.item(position)
+            admin.set_motdepasse(user.get_motdepasse)
+            admin.afficher
+        end
 
-            if motdepasse_saisie.is_equal(user.get_motdepasse) then 
-                io.put_string("Vous êtes connecté, bienvenue "+ user.get_prenom +"%N")
-                --- TODO ajout if avec test de classe user ou admin -- 
-                res:=1
-
-                if motdepasse_saisie.is_equal(user.get_identifiant) then 
-                    io.put_string("Première connection ? Pour des raisons de sécurité merci de changer votre mot de passe %N")
-                    user.init_motdepasse
-
-                else 
-
-                end 
-
-            else  
-                io.put_string("Erreur, mot de passe incorrect !")
-            end
-        end 
-
-        Result := res
+        Result := admin
     end 
+
+
 
 
 
     ajouter_utilisateur(user : UTILISATEUR) is 
         do
             liste_utilisateurs.force(user,liste_utilisateurs.count)
+            io.put_string("%NUtilisateur ajouté %N")
         end
         
     afficher_utilisateurs is 
@@ -474,7 +429,7 @@ feature {ANY}
         do  
 
             if(liste_utilisateurs.is_empty) then 
-                io.put_string("aucun media%N")
+                io.put_string("aucun utilisateur %N")
             else 
                 from
                    i := 0
@@ -490,21 +445,19 @@ feature {ANY}
         end
 
         
-    supprimer_utilisateur(utilisateur : UTILISATEUR) is
+    supprimer_utilisateur(user : UTILISATEUR) is
         local
-            i : INTEGER
+            position : INTEGER
         do
-            from 
-                i := 1
-            until
-                i = liste_utilisateurs.count
-            loop
-                if liste_utilisateurs@i = utilisateur then
-                    liste_utilisateurs.remove(i)
-                else     
-                    i := i + 1 
-                end
+            position := liste_utilisateurs.index_of(user,0)
+
+            if position = liste_utilisateurs.upper + 1 then 
+                io.put_string("Utilisateur non trouvé %N")
+            else 
+                liste_utilisateurs.remove(position)
+                io.put_string("Utilisateur supprimé %N")
             end
+
         end
               
         
@@ -513,6 +466,8 @@ feature {ANY}
     ajouter_emprunt(emprunt : EMPRUNT) is 
         do
             liste_emprunts.force(emprunt, liste_emprunts.count)
+            io.put_string("Utilisateur ajouté  %N")
+
         end         
         	  	
     -- Méthode pour savoir si un utilisateur peut emprunter un media

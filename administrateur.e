@@ -1,12 +1,13 @@
 class ADMINISTRATEUR inherit
-	UTILISATEUR
-	redefine
-			afficher
+	UTILISATEUR  
+		redefine afficher,is_equal,infix "<" 
+
 	end		
 	
 creation {ANY}
 	make_admin,
-	make_admin_from_user
+	make_admin_from_user,
+	make_empty_admin
  
 feature {}
 	auteur : STRING
@@ -19,10 +20,20 @@ feature {ANY}
 			motdepasse := "admin"
 		end
 
+    make_empty_admin is
+        do
+            nom := ""
+            prenom := ""
+            identifiant := ""
+            motdepasse := ""
+            nb_emprunt := 0
+        end
+
+
 	make_admin_from_user(u:UTILISATEUR) is 
 		do
 			make_admin(u.get_nom,u.get_prenom,u.get_identifiant)
-			motdepasse := u.get_motdepasse
+			motdepasse.copy(u.get_motdepasse)
 		end
 
 
@@ -33,5 +44,17 @@ feature {ANY}
 			io.put_string("Prenom :" + prenom + "%N")
 			io.put_string("Identifiant : " + identifiant + "%N") 
         end
+
+     is_equal(other : ADMINISTRATEUR) : BOOLEAN is
+        do
+            Result := identifiant.is_equal(other.get_identifiant)
+        end
+
+    infix "<" (other: ADMINISTRATEUR) : BOOLEAN is
+        do  
+            Result := identifiant < other.get_identifiant
+        end     
+
+
 
 end -- class LIVRE
