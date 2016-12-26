@@ -36,7 +36,6 @@ feature {}
             u : UTILISATEUR
            
         do
-
             type_courant :=""
 
             ------------ TRAITEMENT ----------------
@@ -70,9 +69,7 @@ feature {}
                 end
             end
 
-
             ------------ CONVERSION EN OBJET ----------------
-
 
             inspect type 
                 when "medias" then 
@@ -89,11 +86,7 @@ feature {}
                     io.put_string("Type de fichier inconnu conversion impossible")     
 
             end 
-    
-
         end
-
-
 
     -- Fonction qui permet de transformer la chaine de caractère venant du parser line en objet de type "UTILISATEUR"    
     parsing_user(dictionnaire : ARRAY[STRING]): UTILISATEUR  is 
@@ -107,46 +100,46 @@ feature {}
             admin : ADMINISTRATEUR
 
         do 
-                flag_admin := False
-                dictionnaire.item(1).right_adjust  
-                create user.make_empty_utilisateur
-                from
-                i := 1 
-                until i > dictionnaire.count
-                loop
-                    cle := ""
-                    valeur := ""
-                    cle.copy(dictionnaire.item(i))
-                    valeur.copy(dictionnaire.item(i+1))
+            flag_admin := False
+            dictionnaire.item(1).right_adjust  
+            create user.make_empty_utilisateur
+            from
+            i := 1 
+            until i > dictionnaire.count
+            loop
+                cle := ""
+                valeur := ""
+                cle.copy(dictionnaire.item(i))
+                valeur.copy(dictionnaire.item(i+1))
 
-                    -- On verifie la cle  
-                    inspect cle 
+                -- On verifie la cle  
+                inspect cle 
+                    when "Nom" then 
+                        user.set_nom(valeur)
 
-                        when "Nom" then 
-                            user.set_nom(valeur)
-                        when "Prenom" then
-                            user.set_prenom(valeur)
-                        when "Identifiant" then
-                            user.set_identifiant(valeur)
-                            user.set_motdepasse(valeur)
-                        when "Admin" then 
-                            create admin.make_admin_from_user(user)
-                            flag_admin := True 
-                        else 
-                            io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré %N");  
-                        end    
-                    i := i+2
-                end 
+                    when "Prenom" then
+                        user.set_prenom(valeur)
+
+                    when "Identifiant" then
+                        user.set_identifiant(valeur)
+                        user.set_motdepasse(valeur)
+
+                    when "Admin" then 
+                        create admin.make_admin_from_user(user)
+                        flag_admin := True 
+
+                    else 
+                        io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré %N");  
+                    end    
+                i := i+2
+            end 
 
             if(flag_admin) then 
                 Result := admin 
             else 
                 Result := user    
             end    
-
-
         end    
-
 
     -- Fonction qui permet de transformer la chaine de caractère venant du parser line en objet de type "MEDIA"    
     parsing_media(dictionnaire : ARRAY[STRING]):MEDIA  is 
@@ -156,82 +149,83 @@ feature {}
             valeur : STRING
             livre : LIVRE 
             dvd : DVD
-        do 
+        do    
+            dictionnaire.item(1).right_adjust   
+
+            inspect dictionnaire.item(1)
+
+                when "Livre" then
+                    i := 2                         
+                    create livre.make_empty_livre
+                    from
+                    until i > dictionnaire.count
+                    loop
+                        cle := ""
+                        valeur := ""
+                        cle.copy(dictionnaire.item(i))
+                        valeur.copy(dictionnaire.item(i+1))
+
+                        -- On verifie la cle  
+                        inspect cle 
+
+                            when "Titre" then 
+                             livre.set_titre(valeur)
+
+                            when "Auteur" then
+                             livre.set_auteur(valeur)
+
+                            when "Nombre" then
+                             livre.set_nombre(valeur.to_integer)
+
+                            else 
+                             io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré%N");  
+                        end    
+                        i := i+2
+                    end 
+
+                    if(livre.get_nombre=0) then 
+                        livre.set_nombre(1)
+                    end
+
+                    Result := livre
                 
-                dictionnaire.item(1).right_adjust   
-    
-                inspect dictionnaire.item(1)
+                when "DVD" then
+                    i := 2                       
+                    create dvd.make_empty_dvd
+                    from
+                    until i > dictionnaire.count
+                    loop
+                        cle := ""
+                        valeur := ""
+                        cle.copy(dictionnaire.item(i))
+                        valeur.copy(dictionnaire.item(i+1))
 
-                    when "Livre" then
-                        i := 2                         
-                        create livre.make_empty_livre
-                        from
-                        until i > dictionnaire.count
-                        loop
-                            cle := ""
-                            valeur := ""
-                            cle.copy(dictionnaire.item(i))
-                            valeur.copy(dictionnaire.item(i+1))
+                        -- On verifie la cle  
+                        inspect cle 
 
-                            -- On verifie la cle  
-                            inspect cle 
+                            when "Titre" then 
+                                dvd.set_titre(valeur)
+                            when "Annee" then
+                                dvd.set_annee(valeur.to_integer)
+                            when "Realisateur" then
+                                dvd.set_realisateur(valeur)
+                            when "Acteur" then
+                                dvd.ajouter_acteur(valeur)
+                            when "Type" then
+                                dvd.set_type(valeur) 
+                            when "Nombre" then
 
-                                when "Titre" then 
-                                 livre.set_titre(valeur)
-                                when "Auteur" then
-                                 livre.set_auteur(valeur)
-                                when "Nombre" then
-                                 livre.set_nombre(valeur.to_integer)
-                                else 
-                                 io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré%N");  
-                            end    
-                            i := i+2
-                        end 
+                            else 
+                             io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré %N");  
+                        end    
+                        i := i+2
+                    end 
 
-                        if(livre.get_nombre=0) then 
-                            livre.set_nombre(1)
-                        end
+                    if(dvd.get_nombre=0) then 
+                        dvd.set_nombre(1)
+                    end
 
-                        Result := livre
-
-                    
-                    when "DVD" then
-                        i := 2                       
-                        create dvd.make_empty_dvd
-                        from
-                        until i > dictionnaire.count
-                        loop
-                            cle := ""
-                            valeur := ""
-                            cle.copy(dictionnaire.item(i))
-                            valeur.copy(dictionnaire.item(i+1))
-
-                            -- On verifie la cle  
-                            inspect cle 
-
-                                when "Titre" then 
-                                    dvd.set_titre(valeur)
-                                when "Annee" then
-                                    dvd.set_annee(valeur.to_integer)
-                                when "Realisateur" then
-                                    dvd.set_realisateur(valeur)
-                                when "Acteur" then
-                                    dvd.ajouter_acteur(valeur)
-                                when "Type" then
-                                    dvd.set_type(valeur) 
-                                when "Nombre" then
-
-                                else 
-                                 io.put_string("Erreur la clé : " + cle +  "est inconnue, vérifier votre fichier d'entré %N");  
-                            end    
-                            i := i+2
-                        end 
-
-                        if(dvd.get_nombre=0) then 
-                            dvd.set_nombre(1)
-                        end
-
-                        Result := dvd
+                    Result := dvd
             end                  
         end
 
@@ -260,15 +254,15 @@ feature {}
                 io.put_string("Echec du parsing : Accès au fichier '")
                 io.put_string(file)
                 io.put_string("' : KO %N")
+            end
+            text_reader.disconnect  	  
         end
-        text_reader.disconnect  	  
-    end
 		
-	-- Méthode pour avoir une date en chaine de cararctères
-	date_string(date: TIME) : STRING is
-	    do
-	        Result := date.day.to_string + "/" + date.month.to_string + "/" + date.year.to_string
-	    end
+    -- Méthode pour avoir une date en chaine de cararctères
+    date_string(date: TIME) : STRING is
+        do
+            Result := date.day.to_string + "/" + date.month.to_string + "/" + date.year.to_string
+        end
 
 feature {ANY}
 
@@ -292,9 +286,9 @@ feature {ANY}
             nb_emprunts_max := 5 -- 5 emprunts max / utilisateur
 
             duree_emprunt_media := 30 -- 30 jours  
-			create liste_medias.with_capacity(1,0)
-			create liste_utilisateurs.with_capacity(1,0)
-			create liste_emprunts.with_capacity(1,0)
+            create liste_medias.with_capacity(1,0)
+            create liste_utilisateurs.with_capacity(1,0)
+            create liste_emprunts.with_capacity(1,0)
             io.put_string("Bienvenue dans la mediatheque du futur !")
             parsing_file("utilisateurs.txt", "utilisateurs")
             parsing_file("medias.txt", "medias")
@@ -312,31 +306,30 @@ feature {ANY}
             io.put_string("Fin du programme !%N")
         end
 
-
     ------ Emprunts --------
-	emprunter_media(utilisateur: UTILISATEUR; media: MEDIA;) is
-		local
+    emprunter_media(utilisateur: UTILISATEUR; media: MEDIA;) is
+        local
             emp : EMPRUNT
             date_limite, test : TIME
-		do
-			if media.est_empruntable then
-				if peut_emprunter(utilisateur) then
-				    -- utilisateurp: UTILISATEUR; mediap: MEDIA; TIME: date_limitep
-					date_limite.update
-					date_limite.add_day(duree_emprunt_media)
-					create emp.make_emprunt(utilisateur, media, date_limite)
-					ajouter_emprunt(emp)
-					io.put_string("Création de l'emprunt OK%N")
-					-- Test date
-					test.update
-					io.put_string("Fait le " + date_string(test) + " --> rendu max le " + date_string(date_limite) + "%N")
-				else
-					io.put_string("Création de l'emprunt KO : l'utilisateur ne peut pas emprunter%N")
-				end		
-			else
-				io.put_string("Création de l'emprunt KO : le média n'est pas empruntable%N")
-			end
-		end
+        do
+            if media.est_empruntable then
+                if peut_emprunter(utilisateur) then
+                    -- utilisateurp: UTILISATEUR; mediap: MEDIA; TIME: date_limitep
+                    date_limite.update
+                    date_limite.add_day(duree_emprunt_media)
+                    create emp.make_emprunt(utilisateur, media, date_limite)
+                    ajouter_emprunt(emp)
+                    io.put_string("Création de l'emprunt OK%N")
+                    -- Test date
+                    test.update
+                    io.put_string("Fait le " + date_string(test) + " --> rendu max le " + date_string(date_limite) + "%N")
+                else
+                    io.put_string("Création de l'emprunt KO : l'utilisateur ne peut pas emprunter%N")
+                end		
+            else
+                io.put_string("Création de l'emprunt KO : le média n'est pas empruntable%N")
+            end
+        end
 
     ------ Medias --------
     ajouter_media(media : MEDIA) is 
@@ -345,11 +338,9 @@ feature {ANY}
         end
 
     afficher_medias is 
-    local
+        local
             i: INTEGER
         do  
-        
-
             if(liste_medias.is_empty) then 
                 io.put_string("aucun media%N")
             else 
@@ -371,51 +362,46 @@ feature {ANY}
 
     -- Retourne l'objet utilisateur correspondant si pas utilisateur retourne nu utilisateur avec  l'id "notfound"
     get_user_object(identifiant : STRING): UTILISATEUR is 
-    local
-        user:UTILISATEUR
-        position:INTEGER
-    do
-        create user.make_empty_utilisateur
-        user.set_identifiant(identifiant)
+        local
+            user:UTILISATEUR
+            position:INTEGER
+        do
+            create user.make_empty_utilisateur
+            user.set_identifiant(identifiant)
 
-        position := liste_utilisateurs.index_of(user,0)
+            position := liste_utilisateurs.index_of(user,0)
 
-        if position = liste_utilisateurs.upper + 1 then 
-            user.set_identifiant("notfound")
-        else 
-            user := liste_utilisateurs.item(position)
-        end
-
-        Result := user
-    end 
+            if position = liste_utilisateurs.upper + 1 then 
+                user.set_identifiant("notfound")
+            else 
+                user := liste_utilisateurs.item(position)
+            end
+            Result := user
+        end 
 
     get_admin_object(identifiant : STRING): ADMINISTRATEUR is 
-    local
-        user : UTILISATEUR
-        admin:ADMINISTRATEUR
-        position:INTEGER
-    do
-        create user.make_empty_utilisateur
-        create admin.make_empty_admin
+        local
+            user : UTILISATEUR
+            admin:ADMINISTRATEUR
+            position:INTEGER
+        do
+            create user.make_empty_utilisateur
+            create admin.make_empty_admin
 
-        admin.set_identifiant(identifiant)
+            admin.set_identifiant(identifiant)
 
-        position := liste_utilisateurs.index_of(admin,0)
+            position := liste_utilisateurs.index_of(admin,0)
 
-        if position = liste_utilisateurs.upper + 1 then 
-            admin.set_identifiant("notfound")
-        else 
-            user := liste_utilisateurs.item(position)
-            admin.set_motdepasse(user.get_motdepasse)
-            admin.afficher
-        end
+            if position = liste_utilisateurs.upper + 1 then 
+                admin.set_identifiant("notfound")
+            else 
+                user := liste_utilisateurs.item(position)
+                admin.set_motdepasse(user.get_motdepasse)
+                admin.afficher
+            end
 
-        Result := admin
-    end 
-
-
-
-
+            Result := admin
+        end 
 
     ajouter_utilisateur(user : UTILISATEUR) is 
         do
@@ -424,10 +410,9 @@ feature {ANY}
         end
         
     afficher_utilisateurs is 
-    local
+        local
             i: INTEGER
         do  
-
             if(liste_utilisateurs.is_empty) then 
                 io.put_string("aucun utilisateur %N")
             else 
@@ -443,31 +428,26 @@ feature {ANY}
                 end
             end
         end
-
         
     supprimer_utilisateur(user : UTILISATEUR) is
         local
             position : INTEGER
         do
             position := liste_utilisateurs.index_of(user,0)
-
             if position = liste_utilisateurs.upper + 1 then 
                 io.put_string("Utilisateur non trouvé %N")
             else 
                 liste_utilisateurs.remove(position)
                 io.put_string("Utilisateur supprimé %N")
             end
-
         end
               
-        
     --- FIN UTILISATEURS --        
 
     ajouter_emprunt(emprunt : EMPRUNT) is 
         do
             liste_emprunts.force(emprunt, liste_emprunts.count)
             io.put_string("Utilisateur ajouté  %N")
-
         end         
         	  	
     -- Méthode pour savoir si un utilisateur peut emprunter un media
@@ -479,8 +459,6 @@ feature {ANY}
                 Result := True
             end
         end
-        
-        
         
     -- CRUD Media
     
@@ -500,8 +478,5 @@ feature {ANY}
                 end
             end
         end
-        
-
-        
 
 end -- class MEDIATHEQUE

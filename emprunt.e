@@ -2,42 +2,42 @@ class EMPRUNT
 -- Represente un emprunt
 	
 creation {ANY}
-	make_emprunt
+    make_emprunt
 
 feature {}
-	utilisateur: UTILISATEUR 
-	media : MEDIA
-	date_debut : TIME -- Date de l'emprunts
-	date_rendu : TIME -- Date à laquelle l'emprunt est rendu
-	date_limite : TIME -- Date maximale de rendu, l'emprunt est en retard à partir de celle-ci
+    utilisateur: UTILISATEUR 
+    media : MEDIA
+    date_debut : TIME -- Date de l'emprunts
+    date_rendu : TIME -- Date à laquelle l'emprunt est rendu
+    date_limite : TIME -- Date maximale de rendu, l'emprunt est en retard à partir de celle-ci
 
 feature {ANY}
 
-	make_emprunt (utilisateurp: UTILISATEUR; mediap: MEDIA; date_limitep: TIME) is
-            local
-                time : TIME		
-            do
-                time.update
-                utilisateur := utilisateurp
-                media := mediap
-                date_debut := time
-                date_limite := date_limitep
-                date_rendu := date_debut -- Si égales, c'est que l'emprunt n'a pas été rendu
-            end	
+    make_emprunt (utilisateurp: UTILISATEUR; mediap: MEDIA; date_limitep: TIME) is
+        local
+            time : TIME		
+        do
+            time.update
+            utilisateur := utilisateurp
+            media := mediap
+            date_debut := time
+            date_limite := date_limitep
+            date_rendu := date_debut -- Si égales, c'est que l'emprunt n'a pas été rendu
+        end	
 
-	-- Getters
+    -- Getters
 
-	get_utilisateur : UTILISATEUR is
+    get_utilisateur : UTILISATEUR is
         do
             Result := utilisateur
         end
 
-	get_media : MEDIA is
+    get_media : MEDIA is
         do
             Result := media 
         end
 
-	get_date_debut : TIME is
+    get_date_debut : TIME is
         do
             Result := date_debut
         end
@@ -52,24 +52,24 @@ feature {ANY}
             Result := date_rendu
         end
 
-	-- Setters
+    -- Setters
 
-	set_utilisateur(utilisateurp: UTILISATEUR) is
+    set_utilisateur(utilisateurp: UTILISATEUR) is
         do
             utilisateur := utilisateurp
         end
 
-	set_media(mediap: MEDIA) is
+    set_media(mediap: MEDIA) is
         do
             media := mediap
         end
 
-	set_date_debut(date_debutp: TIME) is
+    set_date_debut(date_debutp: TIME) is
         do
             date_debut := date_debutp
         end
 
-	set_date_limite(date_limitep: TIME) is
+    set_date_limite(date_limitep: TIME) is
         do
             date_limite := date_limitep
         end
@@ -87,7 +87,7 @@ feature {ANY}
             current_time.update
             if current_time >= date_limite then
                 Result := True
-             else
+            else
                 Result := False
             end
         end

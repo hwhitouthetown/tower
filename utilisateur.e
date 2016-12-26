@@ -1,6 +1,6 @@
 class UTILISATEUR inherit     
     COMPARABLE 
-        redefine is_equal 
+    redefine is_equal 
     end
 
 creation {ANY}
@@ -8,7 +8,7 @@ creation {ANY}
     make_empty_utilisateur
 
 feature {}
-	nom: STRING
+    nom: STRING
     prenom: STRING
     identifiant: STRING
     motdepasse : STRING
@@ -21,17 +21,17 @@ feature {ANY}
     make_utilisateur(nomp: STRING; prenomp: STRING; identifiantp: STRING) is
         do
             nom := ""
-			nom.copy(nomp)
-			
-			prenom := ""
-			prenom.copy(prenomp)
+            nom.copy(nomp)
 
-			identifiant := ""
-			identifiant.copy(identifiantp)
+            prenom := ""
+            prenom.copy(prenomp)
+
+            identifiant := ""
+            identifiant.copy(identifiantp)
 
             motdepasse := ""
             motdepasse.copy(identifiantp)
-            
+
             nb_emprunt := 0
         end
 
@@ -65,20 +65,14 @@ feature {ANY}
             nb_emprunt := 0
 
             afficher
-
             io.put_string("Modification terminée %N")
-
         end    
 
-
-
     init_motdepasse is 
-    local 
-        motdepasse_saisie: STRING 
-        motdepasse_resaisie: STRING
-    do
-
-        
+        local 
+            motdepasse_saisie: STRING 
+            motdepasse_resaisie: STRING
+        do
         from
             motdepasse_saisie := "motdepasse_saisie"
             motdepasse_resaisie := "motdepasse_resaisie"
@@ -100,41 +94,28 @@ feature {ANY}
             else 
                 io.put_string("Erreur les mots de passe saisie sont différents %N")
             end    
-            
         end 
-
-
-
     end    
 
-
-
-
     modifier_motdepasse: INTEGER is
-    local
-        motdepasse_saisie : STRING  
-        res : INTEGER
-    do
-       
-        motdepasse_saisie := ""
+        local
+            motdepasse_saisie : STRING  
+            res : INTEGER
+        do
+            motdepasse_saisie := ""
+            io.put_string("Merci de saisir votre mot de passe actuel %N")
+            io.read_line
+            motdepasse_saisie := io.last_string
 
-        io.put_string("Merci de saisir votre mot de passe actuel %N")
-        io.read_line
-        motdepasse_saisie := io.last_string
-
-        if motdepasse_saisie.is_equal(motdepasse) then 
-            init_motdepasse
-            res := 0
-        else
-            io.put_string("Mot de passe incorrect vous allez être déconnecté %N")
-            res := -1
-        end
-
-        Result := res
-
-    end 
-
-
+            if motdepasse_saisie.is_equal(motdepasse) then 
+                init_motdepasse
+                res := 0
+            else
+                io.put_string("Mot de passe incorrect vous allez être déconnecté %N")
+                res := -1
+            end
+            Result := res
+        end 
 
     -- Getters
 
@@ -191,19 +172,18 @@ feature {ANY}
             motdepasse.copy(modepassep)
         end
     
-
     afficher is
-		do
-			io.put_string("----------- UTILISATEUR -----------%N")
-			io.put_string("Nom : " + nom + "%N")
-			io.put_string("Prenom :" + prenom + "%N")
-			io.put_string("Identifiant : " + identifiant + "%N") 
+        do
+            io.put_string("----------- UTILISATEUR -----------%N")
+            io.put_string("Nom : " + nom + "%N")
+            io.put_string("Prenom :" + prenom + "%N")
+            io.put_string("Identifiant : " + identifiant + "%N") 
         end
 
-	peut_emprunter : BOOLEAN is
-		do
-			-- A implémenter
-		end
+    peut_emprunter : BOOLEAN is
+        do
+            -- A implémenter
+        end
 
 
     is_equal(other : UTILISATEUR) : BOOLEAN is

@@ -1,12 +1,12 @@
 class LIVRE inherit
-	MEDIA	
+    MEDIA	
         redefine
             afficher
         end 
 	
 creation {ANY}
-	make_livre,
-	make_empty_livre  
+    make_livre,
+    make_empty_livre  
 	
 feature {}
 
@@ -14,29 +14,23 @@ feature {}
 
 feature {ANY}
 
-	make_livre(titrei: STRING; nombrei : INTEGER; auteuri : STRING) is
-		do
-			--make_media(titrei, nombrei)
-			
-			titre := ""
-			titre.copy(titrei)
-			
-			nombre := 0
-			nombre.copy(nombrei)
-			
-			auteur := ""
-			auteur.copy(auteuri)
-			
-			
-		end
+    make_livre(titrei: STRING; nombrei : INTEGER; auteuri : STRING) is
+        do
+            titre := ""
+            titre.copy(titrei)
 
-	make_empty_livre is 
-		do
-			--make_empty_media 
-			titre := ""
-			nombre := 0
-			auteur := ""
-		end	
+            nombre := 0
+            nombre.copy(nombrei)
+
+            auteur := ""
+            auteur.copy(auteuri)
+        end
+
+    make_empty_livre is 
+            titre := ""
+            nombre := 0
+            auteur := ""
+        end	
 
 	-- Getters
 
@@ -52,12 +46,12 @@ feature {ANY}
             auteur.copy(auteurp)
         end   
 
-	afficher is
-		do
-			io.put_string("--------LIVRE--------%N")
-			io.put_string("Titre : " + titre + " %N")
-			io.put_string("Auteur : " + auteur + " %N")
-			io.put_string("Nombre d'exemplaire : " + nombre.to_string + "%N") 
-		end
+    afficher is
+        do
+            io.put_string("--------LIVRE--------%N")
+            io.put_string("Titre : " + titre + " %N")
+            io.put_string("Auteur : " + auteur + " %N")
+            io.put_string("Nombre d'exemplaire : " + nombre.to_string + "%N") 
+        end
 
 end -- class LIVRE
