@@ -1,12 +1,13 @@
 class INTERFACE
 -- Represente une 	
 creation {ANY}
-	make
+    make
 
 feature {}
-	connect: INTEGER -- entier 0 non connecté -- 1 connecte user -- 2 connect admin
-	prenom : STRING
-        mediatheque : MEDIATHEQUE
+    connect: INTEGER -- entier 0 non connecté -- 1 connecte user -- 2 connect admin
+    prenom : STRING
+    mediatheque : MEDIATHEQUE
+    utilisateur_connecte : UTILISATEUR
 
 
 feature {ANY}
@@ -38,12 +39,17 @@ feature {ANY}
 
                     when 1 then 
                         io.put_string("| 2 - Se déconnecter                  |%N")
+                        io.put_string("| 3 - Faire un emprunt                |%N")
+                        io.put_string("| 4 - Rendre un média                 |%N")
 
                     when 2 then 
                         io.put_string("| 2 - Se déconnecter                  |%N")
-                        io.put_string("| 4 - Gérer les utilisateurs          |%N")
-                        io.put_string("| 5 - Gérer les emprunts              |%N")
-                        io.put_string("| 6 - Gérer les médias                |%N")
+                        io.put_string("| 3 - Faire un emprunt                |%N")
+                        io.put_string("| 4 - Rendre un média                 |%N")
+                        io.put_string("| 5 - Gérer les utilisateurs          |%N")
+                        io.put_string("| 6 - Gérer les emprunts              |%N")
+                        io.put_string("| 7 - Gérer les médias                |%N")
+                        
                 end -- isnpect          
 
                 io.put_string("| 0 - Quitter                         |%N")
@@ -57,7 +63,8 @@ feature {ANY}
 
                 inspect choix
                     when 1 then
-                        io.put_string("Médias %N")
+                        io.put_string("--- MEDIAS ---%N")
+                        mediatheque.afficher_medias
 
                     when 2 then
                         if(connect = 0) then
@@ -70,11 +77,15 @@ feature {ANY}
                         if(get_connect = 0) then
                             connect := se_connecter_admin
                         else 
-                            connect:= 0
+                            menu_faire_emprunt
                         end -- endif    
 
                     when 4 then 
-                        menu_usr
+                        if connect = 2 then
+                            menu_usr -- admin
+                        else
+                            menu_rendre_emprunt -- user
+                        end
 
                     when 5 then 
                         menu_medias
@@ -192,7 +203,57 @@ feature {ANY}
             end
         end	
 
-	--------------------- MENUS EMPRUNTS ------------------------
+    --------------------- MENUS FAIRE EMPRUNT -------------------
+
+    menu_faire_emprunt is
+        local
+            choix_menu, choix_media : INTEGER
+            nb_media : INTEGER
+            media : MEDIA
+        do
+            io.put_string(" ------------------ FAIRE UN EMPRUNT ----------------%N")
+            io.put_string("| 1 - Faire un emprunt par n° de média               |%N")
+            io.put_string("| 2 - Faire un emprunt par recherche de titre        |%N")
+            io.put_string("| 0 - Retour                                         |%N")         
+            io.put_string(" ----------------------------------------------------%N")
+
+            io.put_string("%NEntrez votre choix %N")
+            io.read_integer
+            io.read_line -- FIX read_integer saute le prochain read_line
+            choix_menu := io.last_integer
+
+            inspect choix_menu
+                when 0 then
+                    io.put_string("Retour vers le menu principal%N")  
+
+                when 1 then
+                    mediatheque.afficher_medias
+                    nb_media := mediateque.get_nb_medias
+                    io.put_string("%NEntrez le n° du média que vous souhaitez emprunter%N")
+                    io.read_integer
+                    io.read_line -- FIX read_integer saute le prochain read_line
+                    choix_media := io.last_integer
+                    if (choix_media <= 0 or choix_media > nb_media) then
+                        io.put_string("Numéro non valide, retour au menu principal%N")
+                    else
+                        media := mediatheque.get_medias.item(choix_media-1)
+                        if NOT media.est_empruntable then
+                            io.put_string("Le média n'est pas empruntable, retour au menu principal%N")
+                        else
+                            mediatheque.emprunter_media(utilisateur_connecte, media)
+                            io.put_string("Emprunt effectué%N")
+                        end
+                    end
+
+                when 2 then
+                    -- REcherche de titre TODO
+
+                else
+                    io.put_string("Choix incorrect %N")  
+            end -- inspect
+        end
+
+  --------------------- MENUS EMPRUNTS ------------------------
 
     menu_empr is 	
         do
@@ -287,6 +348,7 @@ feature {ANY}
                     io.put_string("Vous êtes connecté, bienvenue "+ user.get_prenom +"%N")
         
                     res:=1
+                    utilisateur_connecte.copy(user)
 
                     if motdepasse_saisie.is_equal(user.get_identifiant) then 
                         io.put_string("Première connection ? Pour des raisons de sécurité merci de changer votre mot de passe %N")
@@ -332,6 +394,7 @@ feature {ANY}
                 if motdepasse_saisie.is_equal(user.get_motdepasse) then 
                     io.put_string("Vous êtes connecté, bienvenue "+ user.get_prenom +"%N")
                     res:=2
+                    utilisateur_connecte.copy(user)
 
                     if motdepasse_saisie.is_equal(user.get_identifiant) then 
                         io.put_string("Première connection ? Pour des raisons de sécurité merci de changer votre mot de passe %N")

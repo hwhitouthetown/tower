@@ -26,7 +26,8 @@ feature {ANY}
             auteur.copy(auteuri)
         end
 
-    make_empty_livre is 
+    make_empty_livre is
+        do 
             titre := ""
             nombre := 0
             auteur := ""

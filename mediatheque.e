@@ -246,7 +246,6 @@ feature {}
                     text_reader.read_line
                     if (text_reader.last_string.count > 0) then -- Si différent de la fin de ligne
                         parsing_line(text_reader.last_string, type)
-                        io.put_string("%N")
                     end
                     readable := not text_reader.end_of_input
                 end
@@ -266,17 +265,6 @@ feature {}
 
 feature {ANY}
 
-    test_emprunt is 
-        do
-            io.put_string("NB medias : " + liste_medias.count.to_string + "%N")
-            io.put_string("NB utilisateurs : " + liste_utilisateurs.count.to_string + "%N")
-            io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
-            emprunter_media(liste_utilisateurs@1, liste_medias@1)
-            io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
-            supprimer_media(liste_medias@4)
-            io.put_string("NB medias : " + liste_medias.count.to_string + "%N")
-        end
-
     make_mediatheque is
         do  
             choix_general := 1
@@ -289,21 +277,24 @@ feature {ANY}
             create liste_medias.with_capacity(1,0)
             create liste_utilisateurs.with_capacity(1,0)
             create liste_emprunts.with_capacity(1,0)
-            io.put_string("Bienvenue dans la mediatheque du futur !")
             parsing_file("utilisateurs.txt", "utilisateurs")
             parsing_file("medias.txt", "medias")
-            
-            io.put_string("-------- UTILISATEURS ENREGISTRES ---------%N%N")
-            afficher_utilisateurs
 
-            io.put_string("-------- MEDIAS ENREGISTRES ---------%N%N")
-            afficher_medias  
-            
-            -- Test des emprunts
-            io.put_string("-------- DEBUT DU TEST ---------%N%N")
-            test_emprunt
+            io.put_string("Importation des données réussie%N")
+            io.put_string("NB medias : " + liste_medias.count.to_string + "%N")
+            io.put_string("NB utilisateurs : " + liste_utilisateurs.count.to_string + "%N")
+            io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
+           
+        end
 
-            io.put_string("Fin du programme !%N")
+    get_nb_medias : INTEGER is
+        do
+            Result := liste_medias.count
+        end
+
+    get_medias : ARRAY[MEDIA] is
+        do
+            Result := liste_medias
         end
 
     ------ Emprunts --------
@@ -339,20 +330,23 @@ feature {ANY}
 
     afficher_medias is 
         local
-            i: INTEGER
+            i, nb: INTEGER
         do  
             if(liste_medias.is_empty) then 
                 io.put_string("aucun media%N")
             else 
                 from
-                   i := 0
+                    i := 0
+                    nb := 1
                 until
-                   i = liste_medias.count
+                    i = liste_medias.count
                 loop
                     io.put_string("%N")
+                    io.put_string("Media n°" + nb.to_string + "%N")
                     liste_medias.item(i).afficher
                     io.put_string("%N")
                     i := i+1
+                    nb := nb+1
                 end
             end
         end           
@@ -406,7 +400,6 @@ feature {ANY}
     ajouter_utilisateur(user : UTILISATEUR) is 
         do
             liste_utilisateurs.force(user,liste_utilisateurs.count)
-            io.put_string("%NUtilisateur ajouté %N")
         end
         
     afficher_utilisateurs is 
