@@ -302,7 +302,7 @@ feature {ANY}
             i : INTEGER
             emp : EMPRUNT
         do
-            create tab.make(1,1)
+            create tab.with_capacity(1,0)
             from 
                 i := 0
             until 
@@ -310,7 +310,7 @@ feature {ANY}
             loop
                 emp := liste_emprunts@i
                 if emp.get_utilisateur.is_equal(user) then
-                    tab.add_last(emp)
+                    tab.force(emp,tab.count)
                 end
                 i := i + 1
             end

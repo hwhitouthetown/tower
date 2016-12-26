@@ -108,6 +108,7 @@ feature {ANY}
         do  
             time.update
             date_rendu := time
+            media.set_nombre(media.get_nombre + 1)
         end
         
     afficher is 

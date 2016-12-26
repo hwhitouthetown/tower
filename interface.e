@@ -81,14 +81,16 @@ feature {ANY}
                         end -- endif    
 
                     when 4 then 
-                        if connect = 2 then
-                            menu_usr -- admin
-                        else
-                            menu_rendre_emprunt -- user
-                        end
+                        menu_rendre_emprunt
 
                     when 5 then 
-                        menu_medias
+                        menu_usr
+                        
+                    when 6 then
+                        menu_empr
+                        
+                    when 7 then
+                        -- TODO
            
                     when 0 then
                         --quitter le programme
@@ -265,26 +267,17 @@ feature {ANY}
             if emprunts.count = 0 then
                 io.put_string("Vous n'avez pas d'emprunt en cours, retour au menu principal")
             else
-                 io.put_string("COUCOU ELSE" + emprunts.count.to_string + "%N%N%N")
                 from
                     i := 0
                 until
                     i >= emprunts.count
                 loop
-                    io.put_string("COUCOU avant emp%N%N%N")
                     emp := emprunts.item(i)
-                    emp.afficher
-                    io.put_string("COUCOU après emp%N%N%N")
                     if not emp.est_rendu then
-                        io.put_string("COUCOU 1%N%N%N")
                         io.put_string("Emprunt n°" + i.to_string + "%N")
-                        io.put_string("COUCOU 2%N%N%N")
                         io.put_string("Média : " + emp.get_media.get_titre + "%N")
-                        io.put_string("COUCOU 3%N%N%N")
                         io.put_string("Date emprunt : " + mediatheque.date_string(emp.get_date_debut) + "%N")
-                        io.put_string("COUCOU 4%N%N%N")
                         io.put_string("Date limite rendu : " + mediatheque.date_string(emp.get_date_limite) + "%N")
-                        io.put_string("COUCOU 5%N%N%N")
                         if emp.a_retard then
                             io.put_string("En retard : Oui%N")
                         else
@@ -300,11 +293,12 @@ feature {ANY}
                 io.read_integer
                 io.read_line -- FIX read_integer saute le prochain read_line
                 choix_emp := io.last_integer
-                if (choix_emp < 1 or choix_emp > emprunts.count) then
+                if (choix_emp < 0 or choix_emp > emprunts.count) then
                     io.put_string("N° non valide, retour au menu principal%N")
                 else
                     emp := emprunts.item(choix_emp)
                     emp.rendre
+                    io.put_string("Le média a bien été rendu%N")
                 end
             end  
         end
