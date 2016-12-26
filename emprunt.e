@@ -102,4 +102,12 @@ feature {ANY}
             end
         end
 
+    rendre is
+        local
+            time : TIME
+        do  
+            time.update
+            date_rendu := time
+        end
+
 end -- class EMPRUNT

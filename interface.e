@@ -228,7 +228,7 @@ feature {ANY}
 
                 when 1 then
                     mediatheque.afficher_medias
-                    nb_media := mediateque.get_nb_medias
+                    nb_media := mediatheque.get_nb_medias
                     io.put_string("%NEntrez le n° du média que vous souhaitez emprunter%N")
                     io.read_integer
                     io.read_line -- FIX read_integer saute le prochain read_line
@@ -237,7 +237,7 @@ feature {ANY}
                         io.put_string("Numéro non valide, retour au menu principal%N")
                     else
                         media := mediatheque.get_medias.item(choix_media-1)
-                        if NOT media.est_empruntable then
+                        if not media.est_empruntable then
                             io.put_string("Le média n'est pas empruntable, retour au menu principal%N")
                         else
                             mediatheque.emprunter_media(utilisateur_connecte, media)
@@ -253,7 +253,55 @@ feature {ANY}
             end -- inspect
         end
 
-  --------------------- MENUS EMPRUNTS ------------------------
+    --------------------- MENUS RENDRE EMPRUNTS -----------------
+
+    menu_rendre_emprunt is
+        local
+            emprunts : ARRAY[EMPRUNT]
+            i, choix_emp : INTEGER 
+            emp : EMPRUNT
+        do
+            emprunts := mediatheque.get_emprunt_user(utilisateur_connecte)
+            if emprunts.count = 0 then
+                io.put_string("Vous n'avez pas d'emprunt en cours, retour au menu principal")
+            else
+                -- TODO
+                from
+                    i := 0
+                until
+                    i = emprunts.count
+                loop
+                    emp := emprunts@i
+                    if not emp.est_rendu then
+                        io.put_string("Emprunt n°" + (i+1).to_string + "%N")
+                        io.put_string("Média : " + emp.get_media.get_titre + "%N")
+                        io.put_string("Date emprunt : " + mediatheque.date_string(emp.get_date_debut) + "%N")
+                        io.put_string("Date limite rendu : " + mediatheque.date_string(emp.get_date_limite) + "%N")
+                        if emp.a_retard then
+                            io.put_string("En retard : Oui%N")
+                        else
+                            io.put_string("En retard : Non%N")
+                        end
+                        io.put_string("%N")
+                    end
+                    i := i+1
+                end
+
+                -- Rendre
+                io.put_string("%NEntrez le numéro de l'emprunt à rendre%N")
+                io.read_integer
+                io.read_line -- FIX read_integer saute le prochain read_line
+                choix_emp := io.last_integer
+                if (choix_emp < 1 or choix_emp > emprunts.count) then
+                    io.put_string("N° non valide, retour au menu principal%N")
+                else
+                    emp := emprunts@i
+                    emp.rendre
+                end
+            end  
+        end
+
+    --------------------- MENUS EMPRUNTS ------------------------
 
     menu_empr is 	
         do

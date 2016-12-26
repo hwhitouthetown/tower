@@ -91,14 +91,12 @@ feature {}
     -- Fonction qui permet de transformer la chaine de caractère venant du parser line en objet de type "UTILISATEUR"    
     parsing_user(dictionnaire : ARRAY[STRING]): UTILISATEUR  is 
         local 
-
             i : INTEGER 
             cle : STRING
             flag_admin : BOOLEAN
             valeur : STRING
             user : UTILISATEUR 
             admin : ADMINISTRATEUR
-
         do 
             flag_admin := False
             dictionnaire.item(1).right_adjust  
@@ -256,14 +254,15 @@ feature {}
             end
             text_reader.disconnect  	  
         end
-		
+    
+
+feature {ANY}
+
     -- Méthode pour avoir une date en chaine de cararctères
     date_string(date: TIME) : STRING is
         do
             Result := date.day.to_string + "/" + date.month.to_string + "/" + date.year.to_string
         end
-
-feature {ANY}
 
     make_mediatheque is
         do  
@@ -297,8 +296,29 @@ feature {ANY}
             Result := liste_medias
         end
 
+    get_emprunt_user(user : UTILISATEUR) : ARRAY[EMPRUNT] is
+        local
+            tab : ARRAY[EMPRUNT]
+            i : INTEGER
+            emp : EMPRUNT
+        do
+            create tab.make(1,1)
+            from 
+                i := 0
+            until 
+                i = liste_emprunts.count             
+            loop
+                emp := liste_emprunts@i
+                if emp.get_utilisateur.is_equal(user) then
+                    tab.add_last(emp)
+                end
+                i := i + 1
+            end
+            Result := tab
+        end
+
     ------ Emprunts --------
-    emprunter_media(utilisateur: UTILISATEUR; media: MEDIA;) is
+    emprunter_media(utilisateur: UTILISATEUR; media: MEDIA) is
         local
             emp : EMPRUNT
             date_limite, test : TIME
