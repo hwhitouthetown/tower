@@ -109,5 +109,11 @@ feature {ANY}
             time.update
             date_rendu := time
         end
+        
+    afficher is 
+        do
+            io.put_string("--- EMPRUNT ---%N")
+            io.put_string("Media " + media.get_titre + "%N")
+        end
 
 end -- class EMPRUNT

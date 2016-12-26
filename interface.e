@@ -258,25 +258,33 @@ feature {ANY}
     menu_rendre_emprunt is
         local
             emprunts : ARRAY[EMPRUNT]
-            i, choix_emp : INTEGER 
+            i, choix_emp: INTEGER 
             emp : EMPRUNT
-        do
+        do  
             emprunts := mediatheque.get_emprunt_user(utilisateur_connecte)
             if emprunts.count = 0 then
                 io.put_string("Vous n'avez pas d'emprunt en cours, retour au menu principal")
             else
-                -- TODO
+                 io.put_string("COUCOU ELSE" + emprunts.count.to_string + "%N%N%N")
                 from
                     i := 0
                 until
-                    i = emprunts.count
+                    i >= emprunts.count
                 loop
-                    emp := emprunts@i
+                    io.put_string("COUCOU avant emp%N%N%N")
+                    emp := emprunts.item(i)
+                    emp.afficher
+                    io.put_string("COUCOU après emp%N%N%N")
                     if not emp.est_rendu then
-                        io.put_string("Emprunt n°" + (i+1).to_string + "%N")
+                        io.put_string("COUCOU 1%N%N%N")
+                        io.put_string("Emprunt n°" + i.to_string + "%N")
+                        io.put_string("COUCOU 2%N%N%N")
                         io.put_string("Média : " + emp.get_media.get_titre + "%N")
+                        io.put_string("COUCOU 3%N%N%N")
                         io.put_string("Date emprunt : " + mediatheque.date_string(emp.get_date_debut) + "%N")
+                        io.put_string("COUCOU 4%N%N%N")
                         io.put_string("Date limite rendu : " + mediatheque.date_string(emp.get_date_limite) + "%N")
+                        io.put_string("COUCOU 5%N%N%N")
                         if emp.a_retard then
                             io.put_string("En retard : Oui%N")
                         else
@@ -295,7 +303,7 @@ feature {ANY}
                 if (choix_emp < 1 or choix_emp > emprunts.count) then
                     io.put_string("N° non valide, retour au menu principal%N")
                 else
-                    emp := emprunts@i
+                    emp := emprunts.item(choix_emp)
                     emp.rendre
                 end
             end  
@@ -396,7 +404,7 @@ feature {ANY}
                     io.put_string("Vous êtes connecté, bienvenue "+ user.get_prenom +"%N")
         
                     res:=1
-                    utilisateur_connecte.copy(user)
+                    utilisateur_connecte := user
 
                     if motdepasse_saisie.is_equal(user.get_identifiant) then 
                         io.put_string("Première connection ? Pour des raisons de sécurité merci de changer votre mot de passe %N")
@@ -442,7 +450,7 @@ feature {ANY}
                 if motdepasse_saisie.is_equal(user.get_motdepasse) then 
                     io.put_string("Vous êtes connecté, bienvenue "+ user.get_prenom +"%N")
                     res:=2
-                    utilisateur_connecte.copy(user)
+                    utilisateur_connecte := user
 
                     if motdepasse_saisie.is_equal(user.get_identifiant) then 
                         io.put_string("Première connection ? Pour des raisons de sécurité merci de changer votre mot de passe %N")
