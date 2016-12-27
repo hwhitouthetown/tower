@@ -295,6 +295,16 @@ feature {ANY}
         do
             Result := liste_medias
         end
+        
+    get_users : ARRAY[UTILISATEUR] is
+        do
+            Result := liste_utilisateurs
+        end
+        
+    get_emprunts : ARRAY[EMPRUNT] is
+        do
+            Result := liste_emprunts
+        end
 
     get_emprunt_user(user : UTILISATEUR) : ARRAY[EMPRUNT] is
         local

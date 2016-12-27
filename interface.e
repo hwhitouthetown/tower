@@ -284,7 +284,6 @@ feature {ANY}
                             io.put_string("%N")
                             i := i+1
                         end
-                        -- TODO emprunter
                         io.put_string("Quel média voulez vous emprunter ?")
                         io.put_string("%NEntrez le n° du média que vous souhaitez emprunter%N")
                         io.read_integer
@@ -358,27 +357,124 @@ feature {ANY}
 
     --------------------- MENUS EMPRUNTS ------------------------
 
-    menu_empr is 	
+    menu_empr is
+        local
+            choix_menu, choix_user i : INTEGER 	
+            emprunts : ARRAY[EMPRUNT]
+            users : ARRAY[UTILISATEUR]
+            user : UTILISATEUR
         do
             inspect connect
-            when 0 then 
-                io.put_string("| Merci de vous connecter en tant qu'administrateur  |%N")
+                when 0 then 
+                    io.put_string("| Merci de vous connecter en tant qu'administrateur  |%N")
 
-            when 1 then 
-                io.put_string("| Merci de vous connecter en tant qu'administrateur  |%N")
+                when 1 then 
+                    io.put_string("| Merci de vous connecter en tant qu'administrateur  |%N")
 
-            when 2 then 
-                io.put_string(" ------------- GESTION DES EMPRUNTS -------------%N")
-                io.put_string("| 1 - Consulter les emprunts par utilisateur         |%N")
-                io.put_string("| 2 - Consulter touts les emprunts                   |%N")
-                io.put_string("| 3 - Consulter touts les emprunts en cours          |%N")
-                io.put_string("| 4 - Consulter touts les emprunts en retard         |%N")
-                io.put_string("| 0 - Retour                                         |%N")
+                when 2 then 
+                    io.put_string(" ------------- GESTION DES EMPRUNTS -------------%N")
+                    io.put_string("| 1 - Consulter les emprunts par utilisateur         |%N")
+                    io.put_string("| 2 - Consulter tous les emprunts                   |%N")
+                    io.put_string("| 3 - Consulter tous les emprunts en cours          |%N")
+                    io.put_string("| 4 - Consulter tous les emprunts en retard         |%N")
+                    io.put_string("| 0 - Retour                                         |%N")
 
             end -- inpect
 
             io.put_string(" ----------------------------------------------------%N")	
             io.put_string("%NEntrez votre choix %N")
+            io.read_integer
+            io.read_line -- FIX read_integer saute le prochain read_line
+            choix_menu := io.last_integer
+            inspect choix_menu
+                when 0 then
+                    io.put_string("Retour au menu principal%N")
+                    
+                when 1 then
+                    users := mediatheque.get_users
+                    from
+                        i := 0
+                    until
+                        i = users.count
+                    loop
+                        io.put_string("Utilisateur n°" + i.to_string + "%N")
+                        users.item(i).afficher
+                        io.put_string("%N")
+                        i := i+1
+                    end
+                    io.put_string("%NEntrez pour quel utilisateur vous voulez consulter les emprunts%N")
+                    io.read_integer
+                    io.read_line -- FIX read_integer saute le prochain read_line
+                    choix_user := io.last_integer
+                    if choix_user < 0 or choix_user >= users.count then
+                        io.put_string("Numéro non valide, retour au menu principal")
+                    else
+                        user := users.item(choix_user)
+                        emprunts := mediatheque.get_emprunts
+                        io.put_string("Résultats pour " + user.get_identifiant + "%N")
+                        from
+                            i := 0
+                        until 
+                            i = emprunts.count
+                        loop
+                            if emprunts.item(i).get_utilisateur = user then
+                                emprunts.item(i).afficher
+                                io.put_string("%N")
+                            end
+                            i := i+1
+                        end
+                    end
+                
+                when 2 then
+                    emprunts := mediatheque.get_emprunts
+                    if emprunts.count = 0 then
+                        io.put_string("Il n'y a pas d'emprunts%N")
+                    else
+                        from
+                            i := 0
+                        until 
+                            i = emprunts.count
+                        loop
+                            emprunts.item(i).afficher
+                            io.put_string("%N")
+                            i := i+1
+                        end
+                    end
+                
+                when 3 then
+                    emprunts := mediatheque.get_emprunts
+                    io.put_string("Résultat(s) trouvé(s) :%N")
+                    from
+                        i := 0
+                    until 
+                        i = emprunts.count
+                    loop
+                        if not emprunts.item(i).est_rendu then
+                            emprunts.item(i).afficher
+                            io.put_string("%N")
+                        end
+                        i := i+1
+                    end
+                
+                when 4 then
+                    emprunts := mediatheque.get_emprunts
+                    io.put_string("Résultat(s) trouvé(s) :%N")
+                    from
+                        i := 0
+                    until 
+                        i = emprunts.count
+                    loop
+                        if emprunts.item(i).a_retard then
+                            emprunts.item(i).afficher
+                            io.put_string("%N")
+                        end
+                        i := i+1
+                    end
+                
+                else
+                     io.put_string("Mauvaise saisie, retour au menu principal%N")
+                
+            end -- inspect
         end	
 
 	--------------------- MENUS MEDIAS ------------------------

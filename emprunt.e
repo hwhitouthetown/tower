@@ -111,10 +111,24 @@ feature {ANY}
             media.set_nombre(media.get_nombre + 1)
         end
         
+     -- Méthode pour avoir une date en chaine de cararctères
+    date_string(date: TIME) : STRING is
+        do
+            Result := date.day.to_string + "/" + date.month.to_string + "/" + date.year.to_string
+        end
+        
     afficher is 
         do
             io.put_string("--- EMPRUNT ---%N")
-            io.put_string("Media " + media.get_titre + "%N")
+            io.put_string("Media : " + media.get_titre + "%N")
+            io.put_string("Utilisateur : " + utilisateur.get_identifiant + "%N")
+            io.put_string("Date emprunt : " + date_string(date_debut) + "%N")
+            io.put_string("Date limite rendu : " + date_string(date_limite) + "%N")
+            if a_retard then
+                io.put_string("En retard : Oui%N")
+            else
+                io.put_string("En retard : Non%N")
+            end
         end
 
 end -- class EMPRUNT
