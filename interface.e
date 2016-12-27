@@ -90,7 +90,7 @@ feature {ANY}
                         menu_empr
                         
                     when 7 then
-                        -- TODO
+                        menu_medias
            
                     when 0 then
                         --quitter le programme
@@ -210,8 +210,10 @@ feature {ANY}
     menu_faire_emprunt is
         local
             choix_menu, choix_media : INTEGER
-            nb_media : INTEGER
+            nb_media, i : INTEGER
             media : MEDIA
+            recherche, media_lower : STRING
+            medias : ARRAY[MEDIA]
         do
             io.put_string(" ------------------ FAIRE UN EMPRUNT ----------------%N")
             io.put_string("| 1 - Faire un emprunt par n° de média               |%N")
@@ -248,8 +250,59 @@ feature {ANY}
                     end
 
                 when 2 then
-                    -- REcherche de titre TODO
-
+                    recherche := ""
+                    io.put_string("Merci de saisir une partie du titre du média que vous recherchez %N")
+                    io.read_line
+                    recherche := io.last_string
+                    recherche.to_lower
+                    
+                    create medias.with_capacity(1,0)
+                    from
+                        i := 0
+                    until
+                        i = mediatheque.get_medias.count
+                    loop
+                        media_lower := mediatheque.get_medias.item(i).get_titre
+                        media_lower.to_lower
+                        if media_lower.has_substring(recherche) then
+                            medias.force(mediatheque.get_medias.item(i), medias.count)
+                        end
+                        i := i+1
+                    end
+                    
+                    if medias.count = 0 then
+                        io.put_string("%NAucun résultat trouvé%N")
+                    else 
+                        io.put_string("%NRésultat(s) trouvé(s) (" + medias.count.to_string + ") :%N")
+                        from 
+                            i := 0
+                        until
+                            i = medias.count
+                        loop
+                            io.put_string("Média n°" + i.to_string + " : %N")
+                            medias.item(i).afficher
+                            io.put_string("%N")
+                            i := i+1
+                        end
+                        -- TODO emprunter
+                        io.put_string("Quel média voulez vous emprunter ?")
+                        io.put_string("%NEntrez le n° du média que vous souhaitez emprunter%N")
+                        io.read_integer
+                        io.read_line -- FIX read_integer saute le prochain read_line
+                        choix_media := io.last_integer
+                        
+                        if choix_media < 0 or choix_media >= medias.count then
+                            io.put_string("Numéro non valide, retour au menu principal%N")
+                        else
+                            media := medias.item(choix_media)
+                            if not media.est_empruntable then
+                                io.put_string("Le média n'est pas empruntable, retour au menu principal%N")
+                            else
+                                mediatheque.emprunter_media(utilisateur_connecte, media)
+                                io.put_string("Emprunt effectué%N")
+                            end
+                        end
+                    end 
                 else
                     io.put_string("Choix incorrect %N")  
             end -- inspect
