@@ -22,7 +22,6 @@ feature {ANY}
         do
             create liste_acteurs.with_capacity(1,0)
             liste_acteurs.copy(liste_acteursi)
-
             titre := ""
             titre.copy(titrei)
 
@@ -100,8 +99,12 @@ feature {ANY}
     -- Others
     
     ajouter_acteur(acteur : STRING) is 
+        local
+            a : STRING
         do
-            liste_acteurs.force(acteur,liste_acteurs.count)
+            a := ""
+            a.copy(acteur)
+            liste_acteurs.force(a,liste_acteurs.count)
         end
 
 

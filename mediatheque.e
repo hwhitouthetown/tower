@@ -360,23 +360,21 @@ feature {ANY}
 
     afficher_medias is 
         local
-            i, nb: INTEGER
+            i : INTEGER
         do  
             if(liste_medias.is_empty) then 
                 io.put_string("aucun media%N")
             else 
                 from
                     i := 0
-                    nb := 1
                 until
                     i = liste_medias.count
                 loop
                     io.put_string("%N")
-                    io.put_string("Media n°" + nb.to_string + "%N")
+                    io.put_string("Media n°" + i.to_string + "%N")
                     liste_medias.item(i).afficher
                     io.put_string("%N")
                     i := i+1
-                    nb := nb+1
                 end
             end
         end           
@@ -490,7 +488,7 @@ feature {ANY}
             i, j : INTEGER
         do
             from 
-                i := 1
+                i := 0
             until
                 i = liste_medias.count
             loop
@@ -498,7 +496,7 @@ feature {ANY}
                     liste_medias.remove(i)
                     -- Suppression des emprunts liés à ce média
                     from 
-                        j := 1
+                        j := 0
                     until
                         j = liste_emprunts.count
                         

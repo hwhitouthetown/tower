@@ -109,7 +109,6 @@ feature {ANY}
             choix_menu, choix_media, choix_modif, choix_ajout, nb, annee : INTEGER
             media : MEDIA
             titre, auteur, realisateur, type, acteur : STRING
-            acteurs : ARRAY[STRING]
             livre : LIVRE
             dvd : DVD
         do
@@ -206,38 +205,43 @@ feature {ANY}
 
                     when 3 then 
                         io.put_string("Que voulez vous créer ? DVD (1) ou Livre (2) ? %N")
-                        io.read_line
                         io.read_integer
+                        io.read_line
                         choix_ajout := io.last_integer
                         inspect choix_ajout
                             when 1 then
+                                create dvd.make_empty_dvd
                                 io.put_string("Quel titre ?%N")
                                 io.read_line
                                 titre := io.last_string
                                 if not (titre.compare("") = 0) then
+                                    dvd.set_titre(titre)
                                     io.put_string("Combien d'exemplaire ?%N")
-                                    io.read_line
                                     io.read_integer
+                                    io.read_line
                                     nb := io.last_integer
                                     if nb < 0 then
                                         io.put_string("Le nombre d'exemplaire doit être supérieur à 0, retour au menu précédent%N")
                                     else
+                                        dvd.set_nombre(nb)
                                         io.put_string("Quel réalisateur ?%N")
                                         io.read_line
                                         realisateur := io.last_string
                                         if not (realisateur.compare("") = 0) then
+                                            dvd.set_realisateur(realisateur)
                                             io.put_string("Quelle année ?%N")
-                                            io.read_line
                                             io.read_integer
+                                            io.read_line
                                             annee := io.last_integer
                                             if annee < 1800 or annee > 2100 then
                                                 io.put_string("Année invalide, retour au menu précédent")
                                             else
+                                                dvd.set_annee(annee)
                                                 io.put_string("Quel type ?%N")
                                                 io.read_line
                                                 type := io.last_string
                                                 if not (type.compare("") = 0) then
-                                                    create acteurs.with_capacity(1,0)
+                                                    dvd.set_type(type)
                                                     from
                                                         acteur := "before"
                                                     until
@@ -247,11 +251,9 @@ feature {ANY}
                                                         io.read_line
                                                         acteur := io.last_string
                                                         if not (acteur.compare("") = 0) then
-                                                            acteurs.force(acteur,acteurs.count)
+                                                            dvd.ajouter_acteur(acteur)
                                                         end
-                                                    end
-                                                    -- Création de l'acteur
-                                                    create dvd.make_dvd(titre, nb, annee, acteurs, realisateur, type)
+                                                    end                                                   
                                                     mediatheque.ajouter_media(dvd)
                                                     io.put_string("Le DVD a bien été ajouté aux médias%N")
                                                 else
@@ -267,22 +269,25 @@ feature {ANY}
                                 end
                                 
                             when 2 then
+                                create livre.make_empty_livre
                                 io.put_string("Quel titre ?%N")
                                 io.read_line
                                 titre := io.last_string
                                 if not (titre.compare("") = 0) then
+                                    livre.set_titre(titre)
                                     io.put_string("Combien d'exemplaire ?%N")
-                                    io.read_line
                                     io.read_integer
+                                    io.read_line
                                     nb := io.last_integer
                                     if nb < 0 then
                                         io.put_string("Le nombre d'exemplaire doit être supérieur à 0, retour au menu précédent%N")
                                     else
+                                        livre.set_nombre(nb)
                                         io.put_string("Quel auteur ?%N")
                                         io.read_line
                                         auteur := io.last_string
                                         if not (auteur.compare("") = 0) then
-                                            create livre.make_livre(titre, nb, auteur)
+                                            livre.set_auteur(auteur)
                                             mediatheque.ajouter_media(livre)
                                             io.put_string("Création du livre réussie%N")
                                         else
@@ -517,7 +522,6 @@ feature {ANY}
                     io.read_line
                     choix_type := io.last_integer
                     if choix_type = 1 or choix_type = 2 then
-                        -- DVD ou LIvre TODO
                         if choix_type = 1 then
                             type := "DVD"
                         else
@@ -525,12 +529,12 @@ feature {ANY}
                         end
                         create medias.with_capacity(1,0)
                         from
-                            i := 0
+                            i := 1
                         until
                             i = mediatheque.get_medias.count
                         loop
                             if (mediatheque.get_medias.item(i).generator.compare(type) = 0) then
-                                 medias.force(media,medias.count)
+                                 medias.force(mediatheque.get_medias.item(i),medias.count)
                             end
                             i := i+1
                         end
@@ -542,6 +546,7 @@ feature {ANY}
                         loop
                             io.put_string("Média n° " + i.to_string + "%N")
                             medias.item(i).afficher
+                            i := i+1
                         end
                         
                         io.put_string("Quel média voulez-vous emprunter ?%N")
