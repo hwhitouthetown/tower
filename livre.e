@@ -9,7 +9,6 @@ creation {ANY}
     make_empty_livre  
 	
 feature {}
-
     auteur : STRING 
 
 feature {ANY}

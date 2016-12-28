@@ -50,7 +50,7 @@ feature {ANY}
                         io.put_string("| 6 - Gérer les emprunts              |%N")
                         io.put_string("| 7 - Gérer les médias                |%N")
                         
-                end -- isnpect          
+                end -- inspect          
 
                 io.put_string("| 0 - Quitter                         |%N")
                 io.put_string(" -------------------------------------%N")
@@ -101,6 +101,119 @@ feature {ANY}
                 end -- inspect
             end -- loop 
         end	
+        
+    --------------------- MENUS MEDIAS ------------------------------
+        
+    menu_medias is
+        local
+            choix_menu, choix_media, choix_modif, nb : INTEGER
+            media : MEDIA
+            titre : STRING
+        do
+            choix_menu := 1
+            from
+            until choix_menu = 0 
+            loop
+
+                io.put_string(" ---------------- GESTION DES MEDIAS ----------------%N")
+                io.put_string("| 1 - Modifier un média                              |%N")
+                io.put_string("| 2 - Supprimer un média                             |%N")
+                io.put_string("| 3 - Ajouter un média                               |%N")
+                io.put_string("| 0 - Retour                                         |%N")         
+                io.put_string(" ----------------------------------------------------%N") 
+
+                io.put_string("%NEntrez votre choix %N")
+                io.read_integer
+                io.read_line -- FIX read_integer saute le prochain read_line
+                choix_menu := io.last_integer
+
+                inspect choix_menu 
+                    when 1 then
+                        io.put_string("--- MEDIAS ---%N")
+                        mediatheque.afficher_medias
+                        io.put_string("Quel média voulez-vous modifier ?%N")
+                        io.read_integer
+                        io.read_line -- FIX read_integer saute le prochain read_line
+                        choix_media := io.last_integer
+                        if choix_media < 0 or choix_media >= mediatheque.get_medias.count then
+                            io.put_string("N° de média invalide%N")
+                        else
+                            media := mediatheque.get_medias.item(choix_media)
+                            choix_modif := 1
+                            from
+                            until
+                                choix_modif = 0
+                            loop
+                                media.afficher
+                                io.put_string(" ------------ Que voulez vous modifier ? ------------%N")
+                                io.put_string("| 1 - Le titre                                       |%N")
+                                io.put_string("| 2 - Le nombre d'exemplaire                         |%N")
+                                io.put_string("| 0 - Retour                                         |%N")  
+                                -- Gérer Livre OU DVD TODO
+                                io.put_string(" ----------------------------------------------------%N") 
+                                io.read_integer
+                                io.read_line
+                                choix_modif := io.last_integer
+                                inspect choix_modif 
+                                    when 1 then
+                                        io.put_string("Entrez le nouveau titre%N")
+                                        io.read_line
+                                        titre := io.last_string
+                                        if not (titre.compare("") = 0) then
+                                            media.set_titre(titre)
+                                            io.put_string("Le titre a bien été modifié%N")
+                                        else
+                                            io.put_string("Le titre ne peut pas être vide%N")
+                                        end 
+                                        
+                                    when 2 then
+                                        io.put_string("Entrez le nouveau nombre d'exemplaire%N")
+                                        io.read_integer
+                                        io.read_line
+                                        nb := io.last_integer
+                                        if nb < 0 then
+                                            io.put_string("Le nombre d'exemplaire doit être supérieur à 0%N")
+                                        else
+                                            media.set_nombre(nb)
+                                            io.put_string("Nombre d'exemplaire modifié%N")
+                                        end
+                                    
+                                    when 0 then
+                                        io.put_string("Retour au menu précédent%N")  
+                                        
+                                    else
+                                        io.put_string("Choix incorrect%N") 
+                                end -- inspect 
+                            end -- loop
+                        end   
+
+                    when 2 then 
+                        io.put_string("--- MEDIAS ---%N")
+                        mediatheque.afficher_medias
+                        io.put_string("Quel média voulez-vous supprimer ?%N")
+                        io.read_integer
+                        io.read_line -- FIX read_integer saute le prochain read_line
+                        choix_media := io.last_integer
+                        if choix_media < 0 or choix_media >= mediatheque.get_medias.count then
+                            io.put_string("N° de média invalide%N")
+                        else
+                            mediatheque.supprimer_media(mediatheque.get_medias.item(choix_media))
+                            io.put_string("Suppression du média validée%N") 
+                        end 
+
+                    when 3 then 
+                        -- TODO
+
+                    when 4 then 
+
+                    when 0 then
+                        io.put_string("retour vers le menu principal%N")     
+
+                    else
+                        io.put_string("Choix incorrect%N")     
+                end -- inspect                   
+            end --  loop   
+        end
 
     --------------------- MENUS UTILISATEURS ------------------------
 
@@ -218,6 +331,7 @@ feature {ANY}
             io.put_string(" ------------------ FAIRE UN EMPRUNT ----------------%N")
             io.put_string("| 1 - Faire un emprunt par n° de média               |%N")
             io.put_string("| 2 - Faire un emprunt par recherche de titre        |%N")
+            io.put_string("| 3 - Faire un emprunt par type                      |%N")
             io.put_string("| 0 - Retour                                         |%N")         
             io.put_string(" ----------------------------------------------------%N")
 
@@ -302,6 +416,10 @@ feature {ANY}
                             end
                         end
                     end 
+                    
+                when 3 then
+                    -- TODO
+                
                 else
                     io.put_string("Choix incorrect %N")  
             end -- inspect
@@ -475,30 +593,7 @@ feature {ANY}
                      io.put_string("Mauvaise saisie, retour au menu principal%N")
                 
             end -- inspect
-        end	
-
-	--------------------- MENUS MEDIAS ------------------------
-
-    menu_medias is 	
-        do
-            inspect connect
-                when 0 then 
-                    io.put_string("| Merci de vous connecter en tant qu'administrateur  |%N")
-
-                when 1 then 
-                    io.put_string("| Merci de vous connecter en tant qu'administrateur  |%N")
-
-                when 2 then 
-                    io.put_string(" ------------- GESTION DES MEDIAS -------------%N")
-                    io.put_string("| 1 - Consulter les médias					        |%N")
-                    io.put_string("| 2 - Consulter les médias par type                  |%N")
-                    io.put_string("| 3 - Rechercher un média par nom                    |%N")
-            end -- inpect
-
-            io.put_string("| 0 - Retour                                         |%N")
-            io.put_string(" ----------------------------------------------------%N")	
-            io.put_string("%NEntrez votre choix %N")
-        end	
+        end
 
 	get_connect : INTEGER is 
 	    do 

@@ -487,7 +487,7 @@ feature {ANY}
     
     supprimer_media(media : MEDIA) is
         local
-            i : INTEGER
+            i, j : INTEGER
         do
             from 
                 i := 1
@@ -496,6 +496,19 @@ feature {ANY}
             loop
                 if liste_medias@i = media then
                     liste_medias.remove(i)
+                    -- Suppression des emprunts liés à ce média
+                    from 
+                        j := 1
+                    until
+                        j = liste_emprunts.count
+                        
+                    loop
+                        if liste_emprunts.item(j).get_media = media then
+                            liste_emprunts.remove(j)
+                        else
+                            j := j+1
+                        end
+                    end
                 else     
                     i := i + 1 
                 end
