@@ -106,9 +106,12 @@ feature {ANY}
         
     menu_medias is
         local
-            choix_menu, choix_media, choix_modif, nb : INTEGER
+            choix_menu, choix_media, choix_modif, choix_ajout, nb, annee : INTEGER
             media : MEDIA
-            titre : STRING
+            titre, auteur, realisateur, type, acteur : STRING
+            acteurs : ARRAY[STRING]
+            livre : LIVRE
+            dvd : DVD
         do
             choix_menu := 1
             from
@@ -149,7 +152,7 @@ feature {ANY}
                                 io.put_string("| 1 - Le titre                                       |%N")
                                 io.put_string("| 2 - Le nombre d'exemplaire                         |%N")
                                 io.put_string("| 0 - Retour                                         |%N")  
-                                -- Gérer Livre OU DVD TODO
+                                -- TODO Gérer Livre OU DVD
                                 io.put_string(" ----------------------------------------------------%N") 
                                 io.read_integer
                                 io.read_line
@@ -202,8 +205,98 @@ feature {ANY}
                         end 
 
                     when 3 then 
-                        -- TODO
-
+                        io.put_string("Que voulez vous créer ? DVD (1) ou Livre (2) ? %N")
+                        io.read_line
+                        io.read_integer
+                        choix_ajout := io.last_integer
+                        inspect choix_ajout
+                            when 1 then
+                                io.put_string("Quel titre ?%N")
+                                io.read_line
+                                titre := io.last_string
+                                if not (titre.compare("") = 0) then
+                                    io.put_string("Combien d'exemplaire ?%N")
+                                    io.read_line
+                                    io.read_integer
+                                    nb := io.last_integer
+                                    if nb < 0 then
+                                        io.put_string("Le nombre d'exemplaire doit être supérieur à 0, retour au menu précédent%N")
+                                    else
+                                        io.put_string("Quel réalisateur ?%N")
+                                        io.read_line
+                                        realisateur := io.last_string
+                                        if not (realisateur.compare("") = 0) then
+                                            io.put_string("Quelle année ?%N")
+                                            io.read_line
+                                            io.read_integer
+                                            annee := io.last_integer
+                                            if annee < 1800 or annee > 2100 then
+                                                io.put_string("Année invalide, retour au menu précédent")
+                                            else
+                                                io.put_string("Quel type ?%N")
+                                                io.read_line
+                                                type := io.last_string
+                                                if not (type.compare("") = 0) then
+                                                    create acteurs.with_capacity(1,0)
+                                                    from
+                                                        acteur := "before"
+                                                    until
+                                                        acteur.compare("") = 0
+                                                    loop
+                                                        io.put_string("Ajouter un acteur (vide pour arrêter)%N")
+                                                        io.read_line
+                                                        acteur := io.last_string
+                                                        if not (acteur.compare("") = 0) then
+                                                            acteurs.force(acteur,acteurs.count)
+                                                        end
+                                                    end
+                                                    -- Création de l'acteur
+                                                    create dvd.make_dvd(titre, nb, annee, acteurs, realisateur, type)
+                                                    mediatheque.ajouter_media(dvd)
+                                                    io.put_string("Le DVD a bien été ajouté aux médias%N")
+                                                else
+                                                    io.put_string("Le type ne peut pas etre vide, retour au menu précédent%N")
+                                                end
+                                            end
+                                        else
+                                            io.put_string("Le realisateur ne peut pas être vide, retour au menu précédent")
+                                        end
+                                    end 
+                                else
+                                    io.put_string("Le titre ne peut pas être vide, retour au menu précédent%N")
+                                end
+                                
+                            when 2 then
+                                io.put_string("Quel titre ?%N")
+                                io.read_line
+                                titre := io.last_string
+                                if not (titre.compare("") = 0) then
+                                    io.put_string("Combien d'exemplaire ?%N")
+                                    io.read_line
+                                    io.read_integer
+                                    nb := io.last_integer
+                                    if nb < 0 then
+                                        io.put_string("Le nombre d'exemplaire doit être supérieur à 0, retour au menu précédent%N")
+                                    else
+                                        io.put_string("Quel auteur ?%N")
+                                        io.read_line
+                                        auteur := io.last_string
+                                        if not (auteur.compare("") = 0) then
+                                            create livre.make_livre(titre, nb, auteur)
+                                            mediatheque.ajouter_media(livre)
+                                            io.put_string("Création du livre réussie%N")
+                                        else
+                                            io.put_string("L'auteur ne peut pas être vide, retour au menu précédent")
+                                        end
+                                    end 
+                                else
+                                    io.put_string("Le titre ne peut pas être vide, retour au menu précédent%N")
+                                end
+          
+                            else
+                                io.put_string("Choix incorrect, retour au menu précédent%N")
+                        end -- inspect
+    
                     when 4 then 
 
                     when 0 then
@@ -322,10 +415,10 @@ feature {ANY}
 
     menu_faire_emprunt is
         local
-            choix_menu, choix_media : INTEGER
+            choix_menu, choix_media, choix_type : INTEGER
             nb_media, i : INTEGER
             media : MEDIA
-            recherche, media_lower : STRING
+            recherche, media_lower, type : STRING
             medias : ARRAY[MEDIA]
         do
             io.put_string(" ------------------ FAIRE UN EMPRUNT ----------------%N")
@@ -418,8 +511,59 @@ feature {ANY}
                     end 
                     
                 when 3 then
-                    -- TODO
-                
+                   
+                    io.put_string("Que voulez-vous emprunter ? Un DVD (1) ou un Livre (2) ?%N")
+                    io.read_integer
+                    io.read_line
+                    choix_type := io.last_integer
+                    if choix_type = 1 or choix_type = 2 then
+                        -- DVD ou LIvre TODO
+                        if choix_type = 1 then
+                            type := "DVD"
+                        else
+                            type := "LIVRE"
+                        end
+                        create medias.with_capacity(1,0)
+                        from
+                            i := 0
+                        until
+                            i = mediatheque.get_medias.count
+                        loop
+                            if (mediatheque.get_medias.item(i).generator.compare(type) = 0) then
+                                 medias.force(media,medias.count)
+                            end
+                            i := i+1
+                        end
+                        
+                        from 
+                            i := 0
+                        until
+                            i = medias.count
+                        loop
+                            io.put_string("Média n° " + i.to_string + "%N")
+                            medias.item(i).afficher
+                        end
+                        
+                        io.put_string("Quel média voulez-vous emprunter ?%N")
+                        io.read_integer
+                        io.read_line
+                        choix_media := io.last_integer
+                        
+                        if choix_media < 0 or choix_media >= medias.count then
+                            io.put_string("Numéro non valide, retour au menu principal%N")
+                        else
+                            media := medias.item(choix_media)
+                            if not media.est_empruntable then
+                                io.put_string("Le média n'est pas empruntable, retour au menu principal%N")
+                            else
+                                mediatheque.emprunter_media(utilisateur_connecte, media)
+                                io.put_string("Emprunt effectué%N")
+                            end
+                        end
+                    else
+                        io.put_string("Choix inccorect, retour au menu précédent%N")
+                    end
+                        
                 else
                     io.put_string("Choix incorrect %N")  
             end -- inspect
