@@ -106,11 +106,12 @@ feature {ANY}
         
     menu_medias is
         local
-            choix_menu, choix_media, choix_modif, choix_ajout, nb, annee : INTEGER
+            choix_menu, choix_media, choix_modif, choix_ajout, nb, annee, i : INTEGER
             media : MEDIA
             titre, auteur, realisateur, type, acteur : STRING
             livre : LIVRE
             dvd : DVD
+            sup: BOOLEAN
         do
             choix_menu := 1
             from
@@ -150,8 +151,15 @@ feature {ANY}
                                 io.put_string(" ------------ Que voulez vous modifier ? ------------%N")
                                 io.put_string("| 1 - Le titre                                       |%N")
                                 io.put_string("| 2 - Le nombre d'exemplaire                         |%N")
+                                if media.generator.compare("DVD") = 0 then
+                                    io.put_string("| 3 - L'année                                        |%N")
+                                    io.put_string("| 4 - Le type                                        |%N")
+                                    io.put_string("| 5 - Le réalisateur                                 |%N")
+                                    io.put_string("| 6 - Ajoute un acteur                               |%N")
+                                else
+                                    io.put_string("| 3 - L'auteur                                       |%N")
+                                end
                                 io.put_string("| 0 - Retour                                         |%N")  
-                                -- TODO Gérer Livre OU DVD
                                 io.put_string(" ----------------------------------------------------%N") 
                                 io.read_integer
                                 io.read_line
@@ -179,6 +187,63 @@ feature {ANY}
                                             media.set_nombre(nb)
                                             io.put_string("Nombre d'exemplaire modifié%N")
                                         end
+                                        
+                                    when 3 then
+                                        if media.generator.compare("DVD") = 0 then
+                                            io.put_string("Entrez la nouvelle année%N")
+                                            io.read_integer
+                                            io.read_line
+                                            annee := io.last_integer
+                                            if annee < 1800 or annee > 2100 then
+                                                io.put_string("Année invalide")
+                                            else
+                                                media.set_annee(annee)
+                                                io.put_string("L'annee du DVD a bien été modifiée%N")
+                                            end
+                                        else
+                                            io.put_string("Entrez le nouvel auteur%N")
+                                            io.read_line
+                                            auteur := io.last_string
+                                            if not (auteur.compare("") = 0) then
+                                                media.set_auteur(auteur)
+                                                io.put_string("L'auteur du livre a bien été modifié%N")
+                                            else
+                                                io.put_string("L'auteur ne peut pas être vide%N")
+                                            end 
+                                        end
+                                    
+                                    when 4 then
+                                        io.put_string("Entrez le nouveau type du DVD%N")
+                                        io.read_line
+                                        type := io.last_string
+                                        if not (type.compare("") = 0) then
+                                            media.set_type(type)
+                                            io.put_string("Le type du DVD a bien été modifié%N")
+                                        else
+                                            io.put_string("Le type ne peut pas être vide%N")
+                                        end 
+                                    
+                                    when 5 then
+                                        io.put_string("Entrez le nouveau réalisateur%N")
+                                        io.read_line
+                                        realisateur := io.last_string
+                                        if not (realisateur.compare("") = 0) then
+                                            media.set_realisateur(realisateur)
+                                            io.put_string("Le réalisateur du DVD a bien été modifié%N")
+                                        else
+                                            io.put_string("Le réalisateur ne peut pas être vide%N")
+                                        end 
+                                    
+                                    when 6 then
+                                        io.put_string("Entrez le nom de l'acteur à ajouter%N")
+                                        io.read_line
+                                        acteur := io.last_string
+                                        if not (acteur.compare("") = 0) then
+                                            media.ajouter_acteur(acteur)
+                                            io.put_string("L'acteur a bien été rajouté%N")
+                                        else
+                                            io.put_string("L'acteur ne peut pas être vide%N")
+                                        end 
                                     
                                     when 0 then
                                         io.put_string("Retour au menu précédent%N")  

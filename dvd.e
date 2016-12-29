@@ -107,6 +107,33 @@ feature {ANY}
             liste_acteurs.force(a,liste_acteurs.count)
         end
 
+    supprimer_acteur(acteur : STRING) is
+        local
+            i: INTEGER
+            sup: BOOLEAN
+        do	
+            sup := False
+            if(liste_acteurs.is_empty) then 
+                io.put_string("aucun acteurs%N")
+            else
+                from
+                    i := 0
+                until
+                    i = liste_acteurs.count
+                loop
+                    if liste_acteurs.item(i).compare(acteur) = 0 then
+                        liste_acteurs.remove(i)
+                        io.put_string("Suppresion de l'acteur " + acteur + " réussie%N")
+                        sup := True
+                    else
+                        i := i+1
+                    end
+                end
+                if not sup then
+                    io.put_string("L'acteur " + acteur + " n'est pas dans la liste d'acteurs du DVD%N")
+                end
+            end
+        end 
 
 
     afficher is
