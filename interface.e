@@ -106,12 +106,11 @@ feature {ANY}
         
     menu_medias is
         local
-            choix_menu, choix_media, choix_modif, choix_ajout, nb, annee, i : INTEGER
+            choix_menu, choix_media, choix_modif, choix_ajout, nb, annee : INTEGER
             media : MEDIA
             titre, auteur, realisateur, type, acteur : STRING
             livre : LIVRE
             dvd : DVD
-            sup: BOOLEAN
         do
             choix_menu := 1
             from
@@ -156,8 +155,11 @@ feature {ANY}
                                     io.put_string("| 4 - Le type                                        |%N")
                                     io.put_string("| 5 - Le réalisateur                                 |%N")
                                     io.put_string("| 6 - Ajoute un acteur                               |%N")
+                                    io.put_string("| 7 - Supprimer un acteur                            |%N")
+                                    dvd ::= media
                                 else
-                                    io.put_string("| 3 - L'auteur                                       |%N")
+                                    io.put_string("| 3 - L'auteur                                       |%N")                                 
+                                    livre ::= media
                                 end
                                 io.put_string("| 0 - Retour                                         |%N")  
                                 io.put_string(" ----------------------------------------------------%N") 
@@ -197,7 +199,7 @@ feature {ANY}
                                             if annee < 1800 or annee > 2100 then
                                                 io.put_string("Année invalide")
                                             else
-                                                media.set_annee(annee)
+                                                dvd.set_annee(annee)
                                                 io.put_string("L'annee du DVD a bien été modifiée%N")
                                             end
                                         else
@@ -205,7 +207,7 @@ feature {ANY}
                                             io.read_line
                                             auteur := io.last_string
                                             if not (auteur.compare("") = 0) then
-                                                media.set_auteur(auteur)
+                                                livre.set_auteur(auteur)
                                                 io.put_string("L'auteur du livre a bien été modifié%N")
                                             else
                                                 io.put_string("L'auteur ne peut pas être vide%N")
@@ -217,7 +219,7 @@ feature {ANY}
                                         io.read_line
                                         type := io.last_string
                                         if not (type.compare("") = 0) then
-                                            media.set_type(type)
+                                            dvd.set_type(type)
                                             io.put_string("Le type du DVD a bien été modifié%N")
                                         else
                                             io.put_string("Le type ne peut pas être vide%N")
@@ -228,7 +230,7 @@ feature {ANY}
                                         io.read_line
                                         realisateur := io.last_string
                                         if not (realisateur.compare("") = 0) then
-                                            media.set_realisateur(realisateur)
+                                            dvd.set_realisateur(realisateur)
                                             io.put_string("Le réalisateur du DVD a bien été modifié%N")
                                         else
                                             io.put_string("Le réalisateur ne peut pas être vide%N")
@@ -239,10 +241,23 @@ feature {ANY}
                                         io.read_line
                                         acteur := io.last_string
                                         if not (acteur.compare("") = 0) then
-                                            media.ajouter_acteur(acteur)
+                                            dvd.ajouter_acteur(acteur)
                                             io.put_string("L'acteur a bien été rajouté%N")
                                         else
                                             io.put_string("L'acteur ne peut pas être vide%N")
+                                        end 
+                                        
+                                    
+                                    when 7 then
+                                        -- TODO supprimer acteur DVD
+                                        dvd.afficher_acteurs
+                                        io.put_string("Entrez le nom de l'acteur à supprimer%N")
+                                        io.read_line
+                                        acteur := io.last_string
+                                        if not (acteur.compare("") = 0) then
+                                            dvd.supprimer_acteur(acteur)
+                                        else
+                                            io.put_string("L'acteur à supprimer ne peut pas être vide%N")
                                         end 
                                     
                                     when 0 then
