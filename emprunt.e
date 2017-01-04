@@ -70,7 +70,9 @@ feature {ANY}
         end
 
     set_date_limite(date_limitep: TIME) is
-        do
+        require
+            date_posterieure : date_debut < date_limitep
+        do 
             date_limite := date_limitep
         end
         
@@ -109,6 +111,11 @@ feature {ANY}
             time.update
             date_rendu := time
             media.set_nombre(media.get_nombre + 1)
+            
+            ensure
+                media.get_nombre = old media.get_nombre + 1
+                not (old date_rendu = date_rendu) 
+            
         end
         
      -- Méthode pour avoir une date en chaine de cararctères

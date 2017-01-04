@@ -356,6 +356,9 @@ feature {ANY}
     ajouter_media(media : MEDIA) is 
         do
             liste_medias.force(media,liste_medias.count)
+            
+            ensure 
+                liste_medias.count = old liste_medias.count + 1
         end
 
     afficher_medias is 

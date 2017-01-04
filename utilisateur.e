@@ -162,6 +162,8 @@ feature {ANY}
         end
         
     set_nb_emprunt(nb_empruntp : INTEGER) is
+        require
+            nb_emprunt_valide : nb_empruntp >= 0
         do
             nb_emprunt := nb_empruntp
         end

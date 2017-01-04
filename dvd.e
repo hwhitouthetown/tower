@@ -77,6 +77,8 @@ feature {ANY}
 	-- Setters
 
 	set_annee(anneep: INTEGER) is
+	    require
+            annee_valide : anneep >= 1800 or annee <= 2100
         do
             annee := anneep
         end
