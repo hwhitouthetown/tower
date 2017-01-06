@@ -6,6 +6,7 @@ creation {ANY}
 feature {}
     
     testuser : TESTUTILISATEUR
+    testadmin : TESTADMINISTRATEUR
 
 feature {ANY}
 
@@ -44,7 +45,8 @@ feature {ANY}
                         create testuser.make
 
                     when 3 then
-                        io.put_string("--- Test de la classe administrateur ---%N")        
+                        io.put_string("--- Test de la classe administrateur ---%N")
+                        create testadmin.make        
                     when 0 then
                         --quitter le programme
                         io.put_string("Vous quittez le programme %N")
