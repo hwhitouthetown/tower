@@ -1,7 +1,7 @@
 class LIVRE inherit
     MEDIA	
         redefine
-            afficher
+            afficher,is_equal 
         end 
 	
 creation {ANY}
@@ -52,5 +52,12 @@ feature {ANY}
             io.put_string("Auteur : " + auteur + " %N")
             io.put_string("Nombre d'exemplaire : " + nombre.to_string + "%N") 
         end
+
+    is_equal(other : LIVRE) : BOOLEAN is
+        do
+            Result := auteur.is_equal(other.get_auteur) and titre.is_equal(other.get_titre)
+        end
+
+       
 
 end -- class LIVRE

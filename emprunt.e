@@ -1,4 +1,7 @@
-class EMPRUNT
+class EMPRUNT inherit
+COMPARABLE 
+    redefine is_equal 
+    end
 -- Represente un emprunt
 	
 creation {ANY}
@@ -136,5 +139,16 @@ feature {ANY}
                 io.put_string("En retard : Non%N")
             end
         end
+
+    is_equal(other : EMPRUNT) : BOOLEAN is
+        do
+            Result := utilisateur.is_equal(other.get_utilisateur) and media.is_equal(other.get_media) and date_debut.is_equal(other.get_date_debut)
+        end
+
+    infix "<" (other: EMPRUNT) : BOOLEAN is
+        do  
+            Result := utilisateur < other.get_utilisateur
+        end     
+
 
 end -- class EMPRUNT

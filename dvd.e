@@ -1,7 +1,7 @@
 class DVD inherit
     MEDIA
         redefine
-            afficher
+            afficher,is_equal,infix "<" 
         end 
 	
 creation {ANY}
@@ -169,6 +169,17 @@ feature {ANY}
                     i := i+1
                 end
             end
-        end 	
+        end
+
+    is_equal(other : DVD) : BOOLEAN is
+        do
+            Result := annee.is_equal(other.get_annee) and realisateur.is_equal(other.get_realisateur) and titre.is_equal(other.get_titre)
+        end
+
+    infix "<" (other: DVD) : BOOLEAN is
+        do  
+            Result := annee < other.get_annee
+        end   
+
 
 end -- class DVD

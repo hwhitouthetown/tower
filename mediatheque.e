@@ -21,10 +21,6 @@ feature {}
     liste_utilisateurs : ARRAY[UTILISATEUR]
     nb_emprunts_max : INTEGER 
     duree_emprunt_media : INTEGER 
-    choix_general : INTEGER
-    choix_user : INTEGER
-    choix_media : INTEGER 
-    choix_emprunt : INTEGER
     
     -- Méthode pour parser une ligne en fonction de son type (utilisateurs ou médias)
     parsing_line(line : STRING; type : STRING) is
@@ -266,10 +262,6 @@ feature {ANY}
 
     make_mediatheque is
         do  
-            choix_general := 1
-            choix_user := 1 
-            choix_media := 1 
-            choix_emprunt := 1
             nb_emprunts_max := 5 -- 5 emprunts max / utilisateur
 
             duree_emprunt_media := 30 -- 30 jours  
@@ -285,6 +277,17 @@ feature {ANY}
             io.put_string("NB emprunts : " + liste_emprunts.count.to_string + "%N")
            
         end
+
+
+    get_nb_emprunts_max : INTEGER is 
+        do
+            Result := nb_emprunts_max
+        end 
+
+    get_duree_emprunt_media : INTEGER is 
+        do
+            Result := duree_emprunt_media
+        end         
 
     get_nb_medias : INTEGER is
         do
@@ -444,11 +447,8 @@ feature {ANY}
             if position = liste_utilisateurs.upper + 1 then 
                 io.put_string("Modification impossible utilisateur non trouvé %N")
             else 
-                liste_utilisateurs.remove(position)
+                liste_utilisateurs.put(user,position)
             end
-
-            liste_utilisateurs.force(user, liste_utilisateurs.count)
-
         end 
 
         
@@ -490,7 +490,7 @@ feature {ANY}
     ajouter_emprunt(emprunt : EMPRUNT) is 
         do
             liste_emprunts.force(emprunt, liste_emprunts.count)
-            io.put_string("Utilisateur ajouté  %N")
+            io.put_string("Emprunt ajouté  %N")
         end         
         	  	
     -- Méthode pour savoir si un utilisateur peut emprunter un media

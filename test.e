@@ -7,9 +7,10 @@ feature {}
     
     testuser : TESTUTILISATEUR
     testadmin : TESTADMINISTRATEUR
-    testdvd : EMPRUNTTEST
-    testlivre : LIVRETEST
-    testemprunt : EMPRUNTTEST
+    testdvd : TESTDVD
+    testlivre : TESTLIVRE
+    testemprunt : TESTEMPRUNT
+    testmediatheque : TESTMEDIATHEQUE
 
 feature {ANY}
 
@@ -33,7 +34,9 @@ feature {ANY}
                 io.put_string("| 3 - TESTER LIVRE                |%N")
                 io.put_string("| 4 - TESTER DVD                  |%N")
                 io.put_string("| 5 - TESTER EMPRUNT              |%N")
-                io.put_string("| 0 - Quitter                     |%N")
+                io.put_string("| 6 - TESTER FONCTIONNALITES      |%N")
+                io.put_string("| 7 - TOUT TESTER                 |%N")
+                io.put_string("| 0 - QUITTER                     |%N")
                 io.put_string(" ---------------------------------%N")
 
                 io.put_string("%NEntrez votre choix %N")
@@ -55,18 +58,49 @@ feature {ANY}
                         
                     when 3 then
                         io.put_string("--- Test de la classe livre ---%N")
-                        create testdvd.make   
+                        create testlivre.make   
                         io.put_string("%N")
                         
                     when 4 then
                         io.put_string("--- Test de la classe dvd ---%N")
-                        create testlivre.make  
+                        create testdvd.make  
                         io.put_string("%N") 
                         
                     when 5 then
                         io.put_string("--- Test de la classe emprunt ---%N")
                         create testemprunt.make   
                         io.put_string("%N")
+                    when 6 then
+                        io.put_string("--- Test de la classe mediatheque ---%N")
+                        create testmediatheque.make
+                         io.put_string("%N")  
+                    when 7 then
+
+                        io.put_string("--- Tests globaux ---%N")
+                           
+                        io.put_string("--- Test de la classe utilisateur ---%N")
+                        create testuser.make
+                        io.put_string("%N")
+
+                        io.put_string("--- Test de la classe administrateur ---%N")
+                        create testadmin.make 
+                        io.put_string("%N")
+                        
+                        io.put_string("--- Test de la classe livre ---%N")
+                        create testlivre.make   
+                        io.put_string("%N")
+                        
+                        io.put_string("--- Test de la classe dvd ---%N")
+                        create testdvd.make  
+                        io.put_string("%N") 
+                        
+                        io.put_string("--- Test de la classe emprunt ---%N")
+                        create testemprunt.make   
+                        io.put_string("%N")
+
+                        io.put_string("--- Test de la classe mediatheque ---%N")
+                        create testmediatheque.make
+                        io.put_string("%N")            
                            
                     when 0 then
                         --quitter le programme

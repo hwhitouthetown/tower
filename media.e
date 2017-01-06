@@ -1,5 +1,8 @@
-deferred class MEDIA
--- Represente un media abstrait (pas instanciable)
+deferred class MEDIA inherit
+-- Represente un media abstrait (pas instanciable)  
+ COMPARABLE 
+    redefine is_equal 
+    end
 	
 feature {}
     titre : STRING
@@ -51,5 +54,18 @@ feature {ANY}
                 Result := False
             end
         end
+    
+    is_equal(other : MEDIA) : BOOLEAN is
+        do
+            Result := titre.is_equal(other.get_titre)
+        end
+
+    infix "<" (other: MEDIA) : BOOLEAN is
+        do  
+            Result := titre < other.get_titre
+        end     
+
+
+
 
 end -- class MEDIA
