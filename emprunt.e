@@ -114,7 +114,6 @@ feature {ANY}
             
             ensure
                 media.get_nombre = old media.get_nombre + 1
-                not (old date_rendu = date_rendu) 
             
         end
         
