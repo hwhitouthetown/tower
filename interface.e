@@ -470,7 +470,7 @@ feature {ANY}
                                 user.afficher
 
                             when 2 then 
-                                io.put_string("%NSaisir le nouveau nom %N") 
+                                io.put_string("%NSaisir le nouveau prenom %N") 
                                 io.read_line
                                 user.set_prenom(io.last_string)
                                 user.afficher

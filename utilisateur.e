@@ -184,11 +184,6 @@ feature {ANY}
             io.put_string("Mot de passe : " + motdepasse + "%N") 
         end
 
-    peut_emprunter : BOOLEAN is
-        do
-            -- A implémenter
-        end
-
 
     is_equal(other : UTILISATEUR) : BOOLEAN is
         do
@@ -198,6 +193,6 @@ feature {ANY}
     infix "<" (other: UTILISATEUR) : BOOLEAN is
         do  
             Result := identifiant < other.get_identifiant
-        end    
+        end     
 
 end -- class UTILISATEUR
