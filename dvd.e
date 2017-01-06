@@ -25,11 +25,9 @@ feature {ANY}
             titre := ""
             titre.copy(titrei)
 
-            nombre := 0
-            nombre.copy(nombrei)
+            nombre := nombrei
 
-            annee := 0 
-            annee.copy(anneei)
+            annee := anneei 
 
             realisateur := ""
             realisateur.copy(realisateuri)
@@ -62,7 +60,7 @@ feature {ANY}
 
 	get_type : STRING is
         do
-        	if(type = " ") then 
+        	if(type.compare(" ") = 0) then 
         		Result := "Inconnu"
         	else 
             	Result := type

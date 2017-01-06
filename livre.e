@@ -18,8 +18,7 @@ feature {ANY}
             titre := ""
             titre.copy(titrei)
 
-            nombre := 0
-            nombre.copy(nombrei)
+            nombre := nombrei
 
             auteur := ""
             auteur.copy(auteuri)
