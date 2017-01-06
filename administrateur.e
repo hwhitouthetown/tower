@@ -42,6 +42,7 @@ feature {ANY}
             io.put_string("Nom : " + nom + "%N")
             io.put_string("Prenom :" + prenom + "%N")
             io.put_string("Identifiant : " + identifiant + "%N") 
+            io.put_string("Mot de passe : " + motdepasse + "%N") 
         end
 
      is_equal(other : ADMINISTRATEUR) : BOOLEAN is

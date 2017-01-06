@@ -875,7 +875,8 @@ feature {ANY}
 
                     if motdepasse_saisie.is_equal(user.get_identifiant) then 
                         io.put_string("Première connection ? Pour des raisons de sécurité merci de changer votre mot de passe %N")
-                        user.init_motdepasse
+                        user.init_motdepasse  
+                        mediatheque.modifier_utilisateur(user) 
 
                     else 
 
@@ -907,6 +908,8 @@ feature {ANY}
 
             user.copy(mediatheque.get_admin_object(identifiant))
 
+            user.afficher
+
             if user.get_identifiant.is_equal("notfound") then 
                 io.put_string("Utilisateur inconnu %N")
             else 
@@ -922,6 +925,7 @@ feature {ANY}
                     if motdepasse_saisie.is_equal(user.get_identifiant) then 
                         io.put_string("Première connection ? Pour des raisons de sécurité merci de changer votre mot de passe %N")
                         user.init_motdepasse
+                        mediatheque.modifier_utilisateur(user) 
                     else 
 
                     end 

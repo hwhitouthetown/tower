@@ -91,6 +91,7 @@ feature {ANY}
             if motdepasse_saisie.is_equal(motdepasse_resaisie) then 
                 io.put_string("Votre mot de passe à bien été modifié %N")
                 motdepasse.copy(motdepasse_resaisie)
+                afficher
             else 
                 io.put_string("Erreur les mots de passe saisie sont différents %N")
             end    
@@ -180,6 +181,7 @@ feature {ANY}
             io.put_string("Nom : " + nom + "%N")
             io.put_string("Prenom :" + prenom + "%N")
             io.put_string("Identifiant : " + identifiant + "%N") 
+            io.put_string("Mot de passe : " + motdepasse + "%N") 
         end
 
     peut_emprunter : BOOLEAN is

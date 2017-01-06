@@ -399,7 +399,7 @@ feature {ANY}
             if position = liste_utilisateurs.upper + 1 then 
                 user.set_identifiant("notfound")
             else 
-                user := liste_utilisateurs.item(position)
+                user.copy(liste_utilisateurs.item(position))
             end
             Result := user
         end 
@@ -420,7 +420,10 @@ feature {ANY}
             if position = liste_utilisateurs.upper + 1 then 
                 admin.set_identifiant("notfound")
             else 
-                user := liste_utilisateurs.item(position)
+                user := (liste_utilisateurs.item(position))
+                user.afficher
+                admin.set_prenom(user.get_prenom)
+                admin.set_nom(user.get_nom)    
                 admin.set_motdepasse(user.get_motdepasse)
                 admin.afficher
             end
@@ -432,6 +435,22 @@ feature {ANY}
         do
             liste_utilisateurs.force(user,liste_utilisateurs.count)
         end
+
+    modifier_utilisateur(user : UTILISATEUR) is 
+        local 
+            position : INTEGER
+        do 
+            position := liste_utilisateurs.index_of(user,0)
+            if position = liste_utilisateurs.upper + 1 then 
+                io.put_string("Modification impossible utilisateur non trouvé %N")
+            else 
+                liste_utilisateurs.remove(position)
+            end
+
+            liste_utilisateurs.force(user, liste_utilisateurs.count)
+
+        end 
+
         
     afficher_utilisateurs is 
         local
